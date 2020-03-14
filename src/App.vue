@@ -1,23 +1,38 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <router-view/>
+     <div class="index-nav">
+        <v-nav/>
+      </div>
+      <div class="index-main">
+        <router-view/>
+      </div>
   </div>
 </template>
 
 <script>
+import vNav from '@/components/home/nav/nav.vue'
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    vNav
+  }
 }
 </script>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style lang="scss" scoped>
+@import './assets/scss/mixin.scss';
+#app{
+  position: relative;
+  @include flex-col;
+  height: 100%;
+  width: 100%;
+  .index-nav{
+    width:100%;
+    height: 60px;;
+  }
+  .index-main{
+    flex: 1;
+    width:100%;
+  }
 }
 </style>
