@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import vNav from '@/components/home/nav/nav.vue'
+import vNav from '@/components/nav/nav.vue'
 export default {
   name: 'App',
   components: {
@@ -32,7 +32,9 @@ export default {
   }
   .index-main{
     flex: 1;
-    width:100%;
+    width:960px;
+    max-width: 960px;
+    margin: 0 auto;
   }
 }
 </style>

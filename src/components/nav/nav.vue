@@ -1,6 +1,8 @@
 <template>
     <div class="nav-wrapper">
-        <div class="nav-title">大学生分享问答平台</div>
+        <div class="nav-title">
+           <router-link to="/index">大学生分享问答平台</router-link>
+        </div>
         <div class="nav-left">
             <div class="nav-list">
                 <div class="nav-item">
@@ -16,7 +18,7 @@
                 <input type="text" placeholder="请输入标签" v-model="searchTag">
                 <span class="iconfont">&#xe672;</span>
             </div>
-            <div class="nav-write"><span>写文章</span></div>
+            <div class="nav-write"><span><i class="iconfont">&#xe61b;</i>写文章</span></div>
             <div class="login"><span>登录</span></div>
             <div class="register"><span>注册</span></div>
         </div>
@@ -24,7 +26,7 @@
 </template>
 <script>
 export default {
-  name: 'nav',
+  name: 'vNav',
   data () {
     return {
       searchTag: ''
@@ -33,9 +35,9 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '../../../assets/scss/mixin.scss';
-$navColor:rgb(168, 161, 165);
-$navColor_opacity:rgba(168, 161, 165, .2);
+@import '../../assets/scss/mixin.scss';
+$navColor:rgb(106, 235, 218);
+$navColor_opacity:rgba(135, 238, 212, 0.2);
 $font_color: #333;
 .nav-wrapper{
     @include flex-row;
@@ -43,11 +45,14 @@ $font_color: #333;
     height: 100%;
     line-height: 60px;
     margin: 0 auto;
-    color: $font_color;
     .nav-title{
       margin-right: 20px;
-      font-size: 20px;
+      font-size: 25px;
+      font-weight: 500;
       color: $navColor;
+      a{
+        color:$navColor;
+      }
     }
     .nav-left{
       .nav-list{
@@ -60,6 +65,7 @@ $font_color: #333;
             cursor: pointer;
             &:hover{
               background: $navColor_opacity;
+              color: #fff;
             }
             a{
               color:$font_color;
@@ -118,6 +124,9 @@ $font_color: #333;
           background: $navColor;
           color: #fff;
           cursor: pointer;
+          .iconfont{
+              margin-right: 10px;
+          }
         }
       }
       .login, .register{

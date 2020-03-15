@@ -8,10 +8,14 @@ import './assets/css/reset.css'
 import './assets/css/border.css'
 import './assets/css/iconfont.css'
 
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+
 // 解决移动端300毫秒点击延迟问题
 import fastClick from 'fastclick'
 
 Vue.config.productionTip = false
+Vue.use(ElementUI)
 fastClick.attach(document.body)
 
 /* eslint-disable no-new */
