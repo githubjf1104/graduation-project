@@ -19,17 +19,32 @@
                 <span class="iconfont">&#xe672;</span>
             </div>
             <div class="nav-write"><span><i class="iconfont">&#xe61b;</i>写文章</span></div>
-            <div class="login"><span>登录</span></div>
+            <div class="login" @click="handleLogin"><span>登录</span></div>
             <div class="register"><span>注册</span></div>
         </div>
+        <transition name="fade">
+          <div class="login-wrapper" v-show="showLoginPage">
+            <login></login>
+          </div>
+        </transition>
     </div>
 </template>
 <script>
+import login from '@/components/login/login.vue'
 export default {
   name: 'vNav',
+  components: {
+    login
+  },
   data () {
     return {
-      searchTag: ''
+      searchTag: '',
+      showLoginPage: false
+    }
+  },
+  methods: {
+    handleLogin () {
+      this.showLoginPage = true
     }
   }
 }
@@ -37,7 +52,7 @@ export default {
 <style lang="scss" scoped>
 @import '../../assets/scss/mixin.scss';
 $navColor:rgb(106, 235, 218);
-$navColor_opacity:rgba(135, 238, 212, 0.2);
+$navColor_opacity:rgba(135, 238, 212, 0.1);
 $font_color: #333;
 .nav-wrapper{
     @include flex-row;
@@ -63,12 +78,11 @@ $font_color: #333;
             text-align: center;
             font-size: 20px;
             cursor: pointer;
-            &:hover{
-              background: $navColor_opacity;
-              color: #fff;
-            }
             a{
               color:$font_color;
+              &:hover{
+                color: $navColor;
+              }
               &.active{
                 color: $navColor;
               }
@@ -136,6 +150,7 @@ $font_color: #333;
           display: inline-block;
           vertical-align: middle;
           height: 30px;
+          padding: 5px;
           line-height: 30px;
           font-size: 16px;
           color: $navColor;
@@ -144,6 +159,24 @@ $font_color: #333;
       }
       .login{
           margin-right: 20px;
+      }
+    }
+    .login-wrapper{
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      z-index: 99;
+      backdrop-filter: blur(10px);
+      background: $navColor_opacity;
+      &.fade-enter-active, .fade-leave-active {
+        opacity: 1;
+        transition: all .5s;
+      }
+      &.fade-enter, .fade-leave-to{
+        opacity: 0;
+        background: rgba(0, 0, 0, 0);
       }
     }
 }
