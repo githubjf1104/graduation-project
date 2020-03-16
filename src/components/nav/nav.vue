@@ -20,31 +20,52 @@
             </div>
             <div class="nav-write"><span><i class="iconfont">&#xe61b;</i>写文章</span></div>
             <div class="login" @click="handleLogin"><span>登录</span></div>
-            <div class="register"><span>注册</span></div>
+            <div class="register" @click="handleRegister"><span>注册</span></div>
         </div>
         <transition name="fade">
           <div class="login-wrapper" v-show="showLoginPage">
-            <login></login>
+            <login @loginclose="handleLoginPageClose"></login>
+          </div>
+        </transition>
+        <transition name="fade">
+          <div class="register-wrapper" v-show="showRegisterPage">
+            <register @regiterclose="handleRegisterClose"></register>
           </div>
         </transition>
     </div>
 </template>
 <script>
 import login from '@/components/login/login.vue'
+import register from '@/components/register/register.vue'
+
 export default {
   name: 'vNav',
   components: {
-    login
+    login,
+    register
   },
   data () {
     return {
       searchTag: '',
-      showLoginPage: false
+      showLoginPage: false,
+      showRegisterPage: false
     }
   },
   methods: {
+    // 登录
     handleLogin () {
-      this.showLoginPage = true
+      this.showLoginPage = !this.showLoginPage
+    },
+    // 关闭注册页面
+    handleRegisterClose () {
+      this.showRegisterPage = !this.showRegisterPage
+    },
+    // 注册
+    handleRegister () {
+      this.showRegisterPage = !this.showRegisterPage
+    },
+    handleLoginPageClose () {
+      this.showLoginPage = !this.showLoginPage
     }
   }
 }
@@ -52,7 +73,7 @@ export default {
 <style lang="scss" scoped>
 @import '../../assets/scss/mixin.scss';
 $navColor:rgb(106, 235, 218);
-$navColor_opacity:rgba(135, 238, 212, 0.1);
+$navColor_opacity:rgba(54, 58, 57, 0.1);
 $font_color: #333;
 .nav-wrapper{
     @include flex-row;
@@ -161,14 +182,14 @@ $font_color: #333;
           margin-right: 20px;
       }
     }
-    .login-wrapper{
+    .login-wrapper, .register-wrapper{
       position: fixed;
       top: 0;
       left: 0;
       height: 100%;
       width: 100%;
-      z-index: 99;
-      backdrop-filter: blur(10px);
+      z-index: 20;
+      // backdrop-filter: blur(10px);
       background: $navColor_opacity;
       &.fade-enter-active, .fade-leave-active {
         opacity: 1;
