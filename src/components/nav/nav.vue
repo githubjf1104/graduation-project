@@ -72,8 +72,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import '../../assets/scss/mixin.scss';
-$navColor:rgb(106, 235, 218);
-$navColor_opacity:rgba(54, 58, 57, 0.1);
+$navColor:rgb(51, 7, 245);
+$navColor_opacity:rgba(51, 7, 245, 0.1);
 $font_color: #333;
 .nav-wrapper{
     @include flex-row;
@@ -131,7 +131,7 @@ $font_color: #333;
           &:focus{
             background: #fff;
             color: rgb(12, 12, 12);
-            border:1px solid rgb(186, 226, 231);
+            border:1px solid rgb(148, 150, 250);
           }
         }
         .iconfont{

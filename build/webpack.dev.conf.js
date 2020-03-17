@@ -10,6 +10,21 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
 
+// 通过express导入路由
+const express = require('express');
+const app = express();
+const Router = express.Router();
+
+const appData = require('../data.json')
+var article = appData.article
+
+Router.get('/article', (req, res) => {
+  res.json({
+    code: 200,
+    data: article
+  })
+})
+
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
 
@@ -22,6 +37,9 @@ const devWebpackConfig = merge(baseWebpackConfig, {
 
   // these devServer options should be customized in /config/index.js
   devServer: {
+    before(app) {
+      app.use('/api', Router)
+    },
     clientLogLevel: 'warning',
     historyApiFallback: {
       rewrites: [

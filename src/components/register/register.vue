@@ -98,8 +98,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import '../../assets/scss/mixin.scss';
-$navColor:rgb(106, 235, 218);
-$navColor_opacity:rgba(135, 238, 212, 0.1);
+$navColor:rgb(51, 7, 245);
+$navColor_opacity:rgba(51, 7, 245, 0.1);
 $login_Color:#f5f5f5;
 .register{
     position: relative;
