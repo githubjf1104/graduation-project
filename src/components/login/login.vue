@@ -86,7 +86,7 @@ export default {
 @import '../../assets/scss/mixin.scss';
 $navColor:rgb(51, 7, 245);
 $navColor_opacity:rgba(51, 7, 245, 0.1);
-$login_Color:#f5f5f5;
+$back_Color:#f5f5f5;
 .login{
     position: relative;
     z-index: 30;
@@ -94,7 +94,7 @@ $login_Color:#f5f5f5;
     width: 375px;
     max-width: 375px;
     height: 400px;
-    box-shadow: 2px 2px 1px $login_Color;
+    box-shadow: 2px 2px 1px $back_Color;
     margin: 30px auto 0 auto;
     text-align: center;
     background: #fff;
@@ -105,7 +105,7 @@ $login_Color:#f5f5f5;
       left: 45%;
       height: 60px;
       width: 60px;
-      background: $login_Color;
+      background: $back_Color;
       border-radius: 50%;
       cursor: pointer;
       .iconfont{
@@ -117,7 +117,7 @@ $login_Color:#f5f5f5;
       position: absolute;
       top: 0;
       right: 5%;
-      padding: 5px;
+      padding: 0 5px;
       &.iconfont{
         font-size: 20px;
         cursor: pointer;

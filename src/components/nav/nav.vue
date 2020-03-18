@@ -13,12 +13,14 @@
                 </div>
             </div>
         </div>
-        <div class="nav-right">
-            <div class="nav-search">
+        <div class="nav-middle">
+           <div class="nav-search">
                 <input type="text" placeholder="请输入标签" v-model="searchTag">
                 <span class="iconfont">&#xe672;</span>
             </div>
-            <div class="nav-write"><span><i class="iconfont">&#xe61b;</i>写文章</span></div>
+            <div class="nav-write"><span><i class="iconfont">&#xe61b;</i>发表文章</span></div>
+        </div>
+        <div class="nav-right">
             <div class="login" @click="handleLogin"><span>登录</span></div>
             <div class="register" @click="handleRegister"><span>注册</span></div>
         </div>
@@ -111,9 +113,9 @@ $font_color: #333;
          }
       }
     }
-    .nav-right{
+    .nav-middle{
       @include flex-row;
-      flex: 1 ;
+      flex: 1;
       justify-content: flex-end;
       .nav-search{
         font-size: 0;
@@ -152,6 +154,7 @@ $font_color: #333;
           vertical-align: middle;
           height: 30px;
           line-height: 30px;
+          padding: 0 5px;
           width: 100px;
           border: 1px solid $navColor;
           border-radius: 5px;
@@ -164,6 +167,11 @@ $font_color: #333;
           }
         }
       }
+    }
+    .nav-right{
+      @include flex-row;
+      width: 100px;
+      justify-content: flex-end;
       .login, .register{
         font-size: 0;
         text-align: center;
@@ -178,9 +186,6 @@ $font_color: #333;
           cursor: pointer;
         }
       }
-      .login{
-          margin-right: 20px;
-      }
     }
     .login-wrapper, .register-wrapper{
       position: fixed;
@@ -189,7 +194,7 @@ $font_color: #333;
       height: 100%;
       width: 100%;
       z-index: 20;
-      // backdrop-filter: blur(10px);
+      backdrop-filter: blur(1px);
       background: $navColor_opacity;
       &.fade-enter-active, .fade-leave-active {
         opacity: 1;

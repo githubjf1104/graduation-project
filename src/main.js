@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store'
+import axios from 'axios'
 import './assets/css/reset.css'
 import './assets/css/border.css'
 import './assets/css/iconfont.css'
@@ -15,9 +16,9 @@ import 'element-ui/lib/theme-chalk/index.css'
 import fastClick from 'fastclick'
 
 Vue.config.productionTip = false
+Vue.prototype.$axios = axios
 Vue.use(ElementUI)
 fastClick.attach(document.body)
-
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
