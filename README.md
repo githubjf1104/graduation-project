@@ -3,6 +3,8 @@
 > my graduation project
 
 ## Build Setup
+
+``` bash
 ## 后台
 # 安装MongoDB
 # 打开mongdb.exe
@@ -12,7 +14,6 @@ cd server
 node dev-server.js
 
 ## 前端
-``` bash
 # install dependencies
 npm install
 
