@@ -20,11 +20,8 @@ module.exports = {
             if (err) throw err
             const dbo = db.db('blog')
             const Authorization = req.get('userToken');
-            const vaild = false
             if (Authorization != undefined && Authorization != null && Authorization != '') {
                 const token = Authorization;
-                console.log('token:::');
-                console.log(token)
                 // 验证 token
                 const vaild = await isVaildToken(dbo, token)
                 if (!vaild) {
@@ -37,13 +34,15 @@ module.exports = {
                         code: 0,
                         msg: ''
                     })
+                    db.close()
                 }
+            } else {
+                res.send({
+                    code: 1,
+                    msg: 'token 失效，请重新登陆'
+                })
+                db.close()
             }
-            res.send({
-                code: 1,
-                msg: 'token 失效，请重新登陆'
-            })
-            db.close()
         })
     },
 

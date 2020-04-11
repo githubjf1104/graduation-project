@@ -1,0 +1,53 @@
+[33mcommit 8cd69321d859c434ba59002dfbef45f42d98bf19[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: fang.jiang <1809546039@qq.com>
+Date:   Sat Apr 11 19:39:13 2020 +0800
+
+    登录、注册、登出、基本前端
+
+[33mcommit 7df429651da122fb71eda8f8ed3b556c960290ab[m
+Author: fang.jiang <1809546039@qq.com>
+Date:   Wed Mar 18 23:20:21 2020 +0800
+
+    index.vue部分样式
+
+[33mcommit bb895e17a1f3b8e79e47f51e1aef4a05bc03f291[m
+Author: fang.jiang <1809546039@qq.com>
+Date:   Tue Mar 17 23:39:10 2020 +0800
+
+    mock 数据
+
+[33mcommit 34eb528b0b8e892d413a5a72d5f1700a69a1c76a[m
+Author: fang.jiang <1809546039@qq.com>
+Date:   Mon Mar 16 23:04:02 2020 +0800
+
+    登录注册页面完成
+
+[33mcommit c0c3b9bede6d686aa3492c0ae9f04766ef37eed8[m
+Author: fang.jiang <1809546039@qq.com>
+Date:   Sun Mar 15 23:08:13 2020 +0800
+
+    部分登录框
+
+[33mcommit 628f0ea7f3a3b5fc2d6ab2938c6e95a27d2604ed[m
+Author: fang.jiang <1809546039@qq.com>
+Date:   Sun Mar 15 13:02:37 2020 +0800
+
+    修改header
+
+[33mcommit c5a6f319b941611090b2b44c99afb4cecaba7065[m
+Author: fang.jiang <1809546039@qq.com>
+Date:   Sat Mar 14 23:44:33 2020 +0800
+
+    header
+
+[33mcommit cbb8e1244ddaba92939e191f20c780c6d1db6d23[m
+Author: githubjf1104 <1809546039@qq.com>
+Date:   Fri Jan 24 09:35:29 2020 +0800
+
+    create graduation project
+
+[33mcommit ef104e5b615f3bdbb330407fd96dc91b7a35e55a[m
+Author: githubjf1104 <1809546039@qq.com>
+Date:   Fri Jan 24 01:10:09 2020 +0000
+
+    Initial commit

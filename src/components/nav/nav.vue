@@ -64,7 +64,7 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      this.username = sessionStorage.getItem('username')
+      this.username = localStorage.getItem('username')
     })
   },
   directives: {
