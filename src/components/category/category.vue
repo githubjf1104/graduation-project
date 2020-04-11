@@ -1,11 +1,275 @@
 <template>
-    <div class="category-wrapper">category</div>
+    <div class="category-wrapper">
+      <div class="category-slider">
+        <div class="slider-nav">
+          <ul class="nav-list">
+            <li class="nav-item recommend">
+              <router-link to="/category/commonView">推荐</router-link>
+            </li>
+            <li class="item-line"></li>
+            <li class="nav-item">专业类别
+              <ul class="item-list">
+                  <li
+                    class="item-info"
+                    v-for="(categoryItem, index) in professionalCategory"
+                    :key="index"
+                    :style="handleSliderStyle(categoryItem.value)"
+                    @click="handleCategory(categoryItem)">
+                    {{categoryItem.category}}
+                  </li>
+              </ul>
+            </li>
+            <li class="item-line"></li>
+            <li class="nav-item">公共知识
+              <ul class="item-list">
+                <li class="item-info"
+                  v-for="publicItem in publicKnowledge"
+                  :key="publicItem.value"
+                  :style="handleSliderStyle(publicItem.value)"
+                   @click="handlePublic(publicItem)">
+                   {{publicItem.category}}
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="category-middle">
+        <common-view :articlelist="articlelist"></common-view>
+      </div>
+      <div class="category-right">
+        <div class="person-info">
+          <div class="profile">
+            <span class="iconfont">&#xe6bf;</span>
+            <span class="username">username</span>
+          </div>
+          <div class="user-list">
+            <div class="article">
+              <p>文章</p>
+              <p class="count">0</p>
+            </div>
+             <div class="focus">
+              <p>关注</p>
+              <p class="count">0</p>
+            </div>
+          </div>
+        </div>
+        <div class="category-info"></div>
+      </div>
+    </div>
 </template>
 <script>
+import commonView from '@/components/category/component/CommonView.vue'
 export default {
-  name: 'category'
+  name: 'category',
+  props: {
+    articlelist: Array
+  },
+  components: {
+    commonView
+  },
+  data () {
+    return {
+      sliderData: [{
+        category: '软件工程',
+        value: 0
+      },
+      {
+        category: '计算机',
+        value: 1
+      },
+      {
+        category: '数学与金融',
+        value: 2
+      },
+      {
+        category: '教育',
+        value: 3
+      },
+      {
+        category: '艺术',
+        value: 4
+      },
+      {
+        category: '就业',
+        value: 5
+      },
+      {
+        category: '考研',
+        value: 6
+      }],
+      sliderCategoryIndex: -1,
+      sliderPublicIndex: -1,
+      categoryArticle: []
+    }
+  },
+  mounted () {
+    this.categoryArticle = this.articlelist.slice(0, 10)
+  },
+  computed: {
+    professionalCategory () {
+      return this.sliderData.slice(0, 5)
+    },
+    publicKnowledge () {
+      return this.sliderData.slice(5)
+    }
+  },
+  methods: {
+    // 切换路由
+    handleCategory (categoryItem) {
+      this.sliderCategoryIndex = categoryItem.value
+    },
+    // 处理样式
+    handleSliderStyle (value) {
+      if (value === this.sliderCategoryIndex || value === this.sliderPublicIndex) {
+        return {'color': 'rgb(82, 138, 170)', 'background': '#f5f5f5'}
+      } else {
+        return {}
+      }
+    },
+    handlePublic (publicItem) {
+      this.sliderPublicIndex = publicItem.value
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
+@import '../../assets/scss/mixin.scss';
+$background: #fff;
+$navColor:rgb(82, 138, 170);
+$back_Color:#f5f5f5;
+$box_shadow: #eee;
+.category-wrapper{
+  position: relative;
+  @include flex-row;
+  max-width: 960px;
+  margin: 20px auto 0 auto;
+  .category-slider{
+    flex: 0 0 120px;
+    width: 120px;
+    margin-right: 15px;
+    border-radius: 2px;
+    box-sizing: border-box;
+    .slider-nav{
+      position: fixed;
+      height: 430px;
+      width: 100px;
+      padding: 10px 10px;
+      text-align: center;
+      box-shadow: 4px -4px 2px $box_shadow;
+      background:$background;
+      .nav-list{
+        width: 100%;
+        height: 100%;
+        .nav-item{
+          line-height: 30px;
+          padding: 5px;
+          list-style: none;
+          font-size: 16px;
+          color: #2e3135;
+          transition: background-color .2s, color .2s;
+          cursor: pointer;
+          &.recommend{
+            a {
+              color: #2e3135;
+              &.active{
+                color: $navColor;
+              }
+            }
+            &:hover{
+              color: $navColor;
+              background: $back_Color;
+            }
+          }
+          .item-list{
+            font-size: 14px;
+            display: none;
+            .item-info{
+              line-height: 30px;
+              &:hover{
+                color: $navColor;
+              }
+            }
+          }
+          &:hover{
+            .item-list{
+              display: block;
+            }
+          }
+        }
+        .item-line{
+          margin: 10px 20px;
+          height: 1px;
+          background: $box_shadow;
+          // transform: scaleY(0.5);
+        }
+      }
+    }
+  }
+  .category-middle{
+    flex: 1;
+    background: $background;
+    border-radius: 2px;
+    border: 1px solid $box_shadow;
+    box-shadow: 4px -4px 2px $box_shadow;
+  }
+  .category-right{
+    flex: 0 0 248px;
+    width: 248px;
+    height: 570px;
+    margin-left: 15px;
+    border-radius: 2px;
+    .person-info{
+      @include flex-col;
+      height: 160px;
+      background: $background;
+      .profile{
+        @include flex-row;
+        padding: 10px;
+        height: 80px;
+        font-size: 0px;
+        .iconfont{
+          width: 40px;
+          height: 40px;
+          border: 1px solid $back_Color;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 40px;
+          box-shadow: 0 2px 4px 0 $box_shadow;
+          font-size: 30px;
+         }
+        .username{
+          display: inline-block;
+          line-height: 40px;
+          margin-left: 10px;
+          flex: 1;
+          font-size: 16px;
+        }
+      }
+      .user-list{
+        @include flex-row;
+        border-top:1px solid $back_Color;
+        line-height: 20px;
+        padding: 10px;
+        font-size: 16px;
+        .article{
+          flex: 1;
+          text-align: center;
+          border-right: 1px solid $back_Color;
+          .count{
+            font-weight: bold;
+          }
+        }
+        .focus{
+          flex: 1;
+          text-align: center;
+          .count{
+            font-weight: bold;
+          }
+        }
+      }
+    }
+  }
+}
 
 </style>

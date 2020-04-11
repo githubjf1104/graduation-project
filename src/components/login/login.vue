@@ -1,30 +1,33 @@
 <template>
-      <div class="login">
-        <div class="login-img">
-           <span class="iconfont">&#xe6bf;</span>
-        </div>
-        <div class="login-close iconfont" @click="handleLoginClose">&#xe75d;</div>
-         <el-form :model="loginRuleForm" status-icon :rules="rules" ref="loginRuleForm" label-width="100px" class="demo-ruleForm">
-            <el-form-item label="用户名" prop="username">
-                <el-input type="text" v-model="loginRuleForm.username" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="密码" prop="userpwd">
-                <el-input type="password" v-model="loginRuleForm.userpwd" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" @click="submitForm('loginRuleForm')">登录</el-button>
-                <el-button @click="resetForm('loginRuleForm')">重置</el-button>
-            </el-form-item>
-        </el-form>
+  <div class="login-wrapper">
+    <div class="login">
+      <div class="login-img">
+          <span class="iconfont">&#xe6bf;</span>
       </div>
+      <div class="login-close iconfont" @click="handleLoginClose">&#xe75d;</div>
+        <el-form :model="loginRuleForm" status-icon :rules="rules" ref="loginRuleForm" label-width="100px" class="demo-ruleForm">
+          <el-form-item label="用户名" prop="username">
+              <el-input type="text" v-model="loginRuleForm.username" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" prop="userpwd">
+              <el-input type="password" v-model="loginRuleForm.userpwd" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item>
+              <el-button type="primary" @click="submitForm('loginRuleForm')">登录</el-button>
+              <el-button @click="resetForm('loginRuleForm')">重置</el-button>
+          </el-form-item>
+      </el-form>
+    </div>
+  </div>
 </template>
 <script>
+import { login } from '@/api/index'
 export default {
   name: 'Login',
   data () {
     // 校验用户名
     var validateUsername = (rule, value, callback) => {
-      var reg = /^[a-zA-Z0-9]{6,11}$/
+      var reg = /^[a-zA-Z0-9]{4,11}$/
       if (value === '') {
         callback(new Error('请输入用户名'))
       } else if (!(reg.test(value))) {
@@ -35,7 +38,7 @@ export default {
     }
     // 校验密码
     var validatePass = (rule, value, callback) => {
-      var reg = /^[a-zA-Z]\w{5,17}$/
+      var reg = /^[a-zA-Z]\w{4,17}$/
       if (value === '') {
         callback(new Error('请输入密码'))
       } else if (!(reg.test(value))) {
@@ -62,13 +65,29 @@ export default {
   methods: {
     // 登录关闭按钮
     handleLoginClose () {
-      this.$emit('loginclose')
+      // this.$router.back()
+      this.$router.push('/index')
     },
     // 提交表单
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!')
+          login({
+            user: this.loginRuleForm.username,
+            password: this.loginRuleForm.userpwd
+          }).then(res => {
+            if (res.data.code === 0 && res.status === 200) {
+              localStorage.setItem('token', res.data.data)
+              localStorage.setItem('username', this.loginRuleForm.username)
+              this.Bus.$emit('username', this.loginRuleForm.username)
+              this.$router.push('/index')
+            } else {
+              this.$message({
+                type: 'error',
+                message: '用户名或者密码错误'
+              })
+            }
+          })
         } else {
           console.log('error submit!!')
           return false
@@ -84,12 +103,31 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import '../../assets/scss/mixin.scss';
-$navColor:rgb(51, 7, 245);
+$navColor:rgb(82, 165, 212);
 $navColor_opacity:rgba(51, 7, 245, 0.1);
 $back_Color:#f5f5f5;
-.login{
+.login-wrapper{
+  position: fixed;
+  z-index: 40;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  backdrop-filter: blur(3px);
+  &::before{
+    position:absolute;
+    //一定要设置position:absolute,这样才能设置z-index，让背景处于内容的下一层
+    background-image: url('../../assets/img/login-back.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+    content:'';
+    opacity:0.3;
+    // z-index: -1;
+  }
+  .login{
     position: relative;
-    z-index: 30;
     height: 100%;
     width: 375px;
     max-width: 375px;
@@ -115,8 +153,8 @@ $back_Color:#f5f5f5;
     }
     .login-close{
       position: absolute;
-      top: 0;
-      right: 5%;
+      top: 3%;
+      right: 3%;
       padding: 0 5px;
       &.iconfont{
         font-size: 20px;
@@ -145,4 +183,5 @@ $back_Color:#f5f5f5;
       }
     }
   }
+}
 </style>

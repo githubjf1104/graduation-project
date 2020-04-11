@@ -1,16 +1,18 @@
 <template>
   <div id="app">
      <div class="index-nav">
-        <v-nav/>
+        <v-nav @handlesearch="handleSearch"/>
       </div>
       <div class="index-main">
-        <router-view :articlelist="articleList"/>
+        <transition name="fade">
+            <router-view :articlelist="searchlist"/>
+        </transition>
       </div>
   </div>
 </template>
 
 <script>
-import vNav from '@/components/nav/nav.vue'
+import vNav from '@/components/nav/Nav.vue'
 const CODE_OK = 200
 
 export default {
@@ -20,17 +22,30 @@ export default {
   },
   data () {
     return {
-      articleList: []
+      articleList: [],
+      searchlist: []
     }
+  },
+  computed: {
   },
   created () {
     this.getArticleData()
   },
+  mounted () {
+  },
   methods: {
+    // 处理搜索功能
+    handleSearch (tag) {
+      this.searchlist = this.articleList.filter(article => {
+        return article.tag.indexOf(tag) !== -1
+      })
+    },
+    // 获取后台数据
     getArticleData () {
       this.$axios.get('/api/article').then((res) => {
         if (res.status === CODE_OK && res.data.code === CODE_OK) {
           this.articleList = JSON.parse(JSON.stringify(res.data.data))
+          this.searchlist = JSON.parse(JSON.stringify(res.data.data))
         }
       })
     }
@@ -44,21 +59,33 @@ export default {
   position: relative;
   @include flex-col;
   // height: 100vh;
-  width: 100vm;
+  width: 100%;
   background: #f5f5f5;
-  @media screen and (min-height: 0px) and (max-height: 100vm) {
-    height: 100vh;
-  }
   .index-nav{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 20;
     width:100%;
     height: 60px;;
     background: #fff;
     border-bottom: 1px solid #eee;
+    // background: rgb(7, 17, 27);
   }
   .index-main{
+    margin-top: 60px;
     width: 100%;
     flex: 1;
-    overflow: hidden;
+    .fade-enter-active, .fade-leave-active {
+      // opacity: 1;
+      transition: opacity .5s;
+    }
+    .fade-enter, .fade-leave-active{
+      opacity: 0;
+    }
+    .fade-leave-to{
+      display: none;
+    }
   }
 }
 </style>

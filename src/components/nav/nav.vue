@@ -15,67 +15,133 @@
         </div>
         <div class="nav-middle">
            <div class="nav-search">
-                <input type="text" placeholder="请输入标签" v-model="searchTag">
-                <span class="iconfont">&#xe672;</span>
+                <input type="text" placeholder="请输入标签" v-model="searchTag" @keyup.enter="handleSearch(searchTag)">
+                <span class="iconfont" @click="handleSearch(searchTag)">&#xe672;</span>
             </div>
-            <div class="nav-write"><span><i class="iconfont">&#xe61b;</i>发表文章</span></div>
+            <div class="nav-write" @click="handleEditArticle"><span><i class="iconfont">&#xe61b;</i>发表文章</span></div>
         </div>
-        <div class="nav-right">
+        <div class="nav-right" v-show="!username">
             <div class="login" @click="handleLogin"><span>登录</span></div>
             <div class="register" @click="handleRegister"><span>注册</span></div>
         </div>
-        <transition name="fade">
-          <div class="login-wrapper" v-show="showLoginPage">
-            <login @loginclose="handleLoginPageClose"></login>
-          </div>
-        </transition>
-        <transition name="fade">
-          <div class="register-wrapper" v-show="showRegisterPage">
-            <register @regiterclose="handleRegisterClose"></register>
-          </div>
-        </transition>
+        <div class="nav-right-username" v-show="username">
+          <el-dropdown @command="handleDropdownEvent">
+            <span class="el-dropdown-link">
+              {{username}}
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item icon="el-icon-right" command="loginOut">退出登录</el-dropdown-item>
+              <el-dropdown-item icon="el-icon-user" command="personal">个人中心</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </div>
     </div>
 </template>
 <script>
-import login from '@/components/login/login.vue'
-import register from '@/components/register/register.vue'
+import { loginOut, vaildToken } from '@/api/index'
 
 export default {
   name: 'vNav',
+  props: {},
   components: {
-    login,
-    register
   },
   data () {
     return {
       searchTag: '',
       showLoginPage: false,
-      showRegisterPage: false
+      showRegisterPage: false,
+      username: ''
     }
   },
+  computed: {
+  },
+  created () {
+    this.Bus.$on('username', (username) => {
+      this.$nextTick(() => {
+        this.username = username
+      })
+    })
+  },
+  mounted () {
+    this.$nextTick(() => {
+      this.username = sessionStorage.getItem('username')
+    })
+  },
+  directives: {
+  },
   methods: {
+    handleDropdown () {
+      this.isDropdown = !this.isDropdown
+    },
+    handleSearch (tag) {
+      this.$emit('handlesearch', tag)
+    },
     // 登录
     handleLogin () {
-      this.showLoginPage = !this.showLoginPage
+      this.$router.push('/login')
     },
-    // 关闭注册页面
-    handleRegisterClose () {
-      this.showRegisterPage = !this.showRegisterPage
-    },
-    // 注册
     handleRegister () {
-      this.showRegisterPage = !this.showRegisterPage
+      this.$router.push('/register')
     },
-    handleLoginPageClose () {
-      this.showLoginPage = !this.showLoginPage
+    // 发表文章
+    handleEditArticle () {
+      vaildToken().then(res => {
+        if (res.data.code === 0) {
+          this.$router.push('/edit')
+          return
+        }
+        this.$message({
+          type: 'info',
+          message: '请登录后再发表文章'
+        })
+      })
+    },
+    handleDropdownEvent (command) {
+      if (command === 'loginOut') {
+        this.$confirm('是否确定退出登录?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.handleLoginOut()
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消退出'
+          })
+        })
+      }
+    },
+    // 退出登录
+    handleLoginOut () {
+      loginOut({
+        user: this.username
+      }).then(res => {
+        if (res.data.code === 0 && res.status === 200) {
+          this.$message({
+            type: 'success',
+            message: '退出登录成功'
+          })
+          this.username = ''
+          // localStorage.removeItem('token')
+          // localStorage.removeItem('username')
+          localStorage.clear()
+          this.$router.push('/index')
+        } else {
+          this.$message({
+            type: 'error',
+            message: '退出登录失败'
+          })
+        }
+      })
     }
   }
 }
 </script>
 <style lang="scss" scoped>
 @import '../../assets/scss/mixin.scss';
-$navColor:rgb(51, 7, 245);
-$navColor_opacity:rgba(51, 7, 245, 0.1);
+$navColor:rgb(82, 138, 170);
+$navColor_opacity:rgba(82, 138, 170, 0.1);
 $font_color: #333;
 .nav-wrapper{
     @include flex-row;
@@ -187,22 +253,14 @@ $font_color: #333;
         }
       }
     }
-    .login-wrapper, .register-wrapper{
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      z-index: 20;
-      backdrop-filter: blur(1px);
-      background: $navColor_opacity;
-      &.fade-enter-active, .fade-leave-active {
-        opacity: 1;
-        transition: all .5s;
-      }
-      &.fade-enter, .fade-leave-to{
-        opacity: 0;
-        background: rgba(0, 0, 0, 0);
+    .nav-right-username{
+      position: relative;
+      @include flex-col;
+      .el-dropdown-link{
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        cursor: pointer;
       }
     }
 }

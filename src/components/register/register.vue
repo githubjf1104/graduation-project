@@ -1,33 +1,37 @@
 <template>
-      <div class="register">
-        <div class="register-img">
-           <span class="iconfont">&#xe6bf;</span>
+    <div class="register-wrapper">
+        <div class="register">
+          <div class="register-img">
+              <span class="iconfont">&#xe6bf;</span>
+          </div>
+          <div class="register-close iconfont" @click="handleregiterClose">&#xe75d;</div>
+            <el-form :model="registerRuleForm" status-icon :rules="rules" ref="registerRuleForm" label-width="100px" class="demo-ruleForm">
+              <el-form-item label="用户名" prop="username">
+                  <el-input v-model="registerRuleForm.username"></el-input>
+              </el-form-item>
+              <el-form-item label="密码" prop="userpwd">
+                  <el-input type="password" v-model="registerRuleForm.userpwd" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="确认密码" prop="checkpwd">
+                  <el-input type="password" v-model="registerRuleForm.checkpwd" autocomplete="off"></el-input>
+              </el-form-item>
+              <el-form-item>
+                  <el-button type="primary" @click="registerSubmit('registerRuleForm')">注册</el-button>
+                  <el-button @click="resetForm('registerRuleForm')">重置</el-button>
+              </el-form-item>
+          </el-form>
         </div>
-        <div class="register-close iconfont" @click="handleregiterClose">&#xe75d;</div>
-         <el-form :model="registerRuleForm" status-icon :rules="rules" ref="registerRuleForm" label-width="100px" class="demo-ruleForm">
-            <el-form-item label="用户名" prop="username">
-                <el-input v-model.number="registerRuleForm.username"></el-input>
-            </el-form-item>
-            <el-form-item label="密码" prop="userpwd">
-                <el-input type="password" v-model="registerRuleForm.userpwd" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="确认密码" prop="checkpwd">
-                <el-input type="password" v-model="registerRuleForm.checkpwd" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" @click="submitForm('registerRuleForm')">注册</el-button>
-                <el-button @click="resetForm('registerRuleForm')">重置</el-button>
-            </el-form-item>
-        </el-form>
-      </div>
+    </div>
 </template>
 <script>
+import { register } from '@/api/index'
+
 export default {
-  name: 'Login',
+  name: 'Register',
   data () {
     // 校验用户名
     var validateUsername = (rule, value, callback) => {
-      var reg = /^[a-zA-Z0-9]{6,11}$/
+      var reg = /^[a-zA-Z0-9]{3,11}$/
       if (value === '') {
         callback(new Error('请输入用户名'))
       } else if (!(reg.test(value))) {
@@ -38,7 +42,7 @@ export default {
     }
     // 校验密码
     var validatePass = (rule, value, callback) => {
-      var reg = /^[a-zA-Z]\w{5,17}$/
+      var reg = /^[a-zA-Z]\w{3,17}$/
       if (value === '') {
         callback(new Error('请输入密码'))
       } else if (!(reg.test(value))) {
@@ -64,13 +68,13 @@ export default {
       },
       rules: {
         username: [
-          { validator: validateUsername, trigger: 'blur' }
+          { required: true, validator: validateUsername, trigger: 'blur' }
         ],
         userpwd: [
-          { validator: validatePass, trigger: 'blur' }
+          { required: true, validator: validatePass, trigger: 'blur' }
         ],
         checkpwd: [
-          { validator: validateCheckPwd, trigger: 'blur' }
+          { required: true, validator: validateCheckPwd, trigger: 'blur' }
         ]
       }
     }
@@ -78,12 +82,34 @@ export default {
   methods: {
     // 关闭注册页面
     handleregiterClose () {
-      this.$emit('regiterclose')
+      // this.$router.back()
+      this.$router.push('/index')
     },
-    submitForm (formName) {
+    registerSubmit (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!')
+          register({
+            user: this.registerRuleForm.username,
+            password: this.registerRuleForm.userpwd
+          }).then(res => {
+            if (res.data.code === 0 && res.status === 200) {
+              this.$message({
+                type: 'success',
+                message: '注册成功，请登录'
+              })
+              this.$router.push('/login')
+            } else if (res.data.code === -1) {
+              this.$message({
+                type: 'error',
+                message: '该用户已存在'
+              })
+            } else {
+              this.$message({
+                type: 'error',
+                message: '注册失败'
+              })
+            }
+          })
         } else {
           console.log('error submit!!')
           return false
@@ -98,12 +124,31 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import '../../assets/scss/mixin.scss';
-$navColor:rgb(51, 7, 245);
+$navColor:rgb(124, 205, 252);
 $navColor_opacity:rgba(51, 7, 245, 0.1);
 $login_Color:#f5f5f5;
-.register{
+.register-wrapper{
+  position: fixed;
+  z-index: 40;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  backdrop-filter: blur(3px);
+  &::before{
+    position:absolute;
+    //一定要设置position:absolute,这样才能设置z-index，让背景处于内容的下一层
+    background-image: url('../../assets/img/login-back.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+    content:'';
+    opacity:0.3;
+    // z-index: -1;
+  }
+  .register{
     position: relative;
-    z-index: 30;
     height: 100%;
     width: 375px;
     max-width: 375px;
@@ -128,8 +173,8 @@ $login_Color:#f5f5f5;
     }
     .register-close{
       position: absolute;
-      top: 0;
-      right: 5%;
+      top: 2%;
+      right: 3%;
       padding: 5px;
       &.iconfont{
         font-size: 20px;
@@ -156,4 +201,5 @@ $login_Color:#f5f5f5;
       }
     }
   }
+}
 </style>
