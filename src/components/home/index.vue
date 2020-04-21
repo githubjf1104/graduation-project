@@ -66,7 +66,7 @@
     </div>
 </template>
 <script>
-import { fetchAllArticles, fetchArticleContentById, fetchAppointArticles } from '@/api/index'
+import { fetchAllArticles, fetchArticleContentById } from '@/api/index'
 
 export default {
   name: 'Index',
@@ -93,12 +93,9 @@ export default {
     }
   },
   created () {
-    this.getArticleData()
+    this.getAllArticles()
     this.Bus.$on('handlesearch', tag => {
-      // this.articleList = this.articleList.filter(article => {
-      //   return article.articleTags.indexOf(tag) !== -1
-      // })
-      this.getAppointArticle(tag)
+      this.getAllArticles(tag)
     })
   },
   mounted () {
@@ -126,32 +123,17 @@ export default {
     }
   },
   methods: {
-    // 获取后台数据
-    getArticleData () {
-      fetchAllArticles({
-        pageSize: this.pageSize,
-        currentPage: this.currentPage
-      }).then(res => {
-        if (res.data.code === 0 && res.status === 200) {
-          this.articleList = res.data.data
-          this.total = res.data.total
-        }
-      }).catch(err => {
-        console.log(err)
-        this.$message.error('获取文章失败')
-      })
-    },
     // 分页
     handleSizeChange (val) {
       // console.log(`每页 ${val} 条`)
       this.pageSize = val
       this.currentPage = 1
-      this.getArticleData()
+      this.getAllArticles()
     },
     handleCurrentChange (val) {
       // console.log(`当前页: ${val}`)
       this.currentPage = val
-      this.getArticleData()
+      this.getAllArticles()
     },
     // 获取选择文章内容
     getCurrentArticleContent (id) {
@@ -164,9 +146,9 @@ export default {
         this.$message.info('获取文章内容失败')
       })
     },
-    // 根据标签查询文章
-    getAppointArticle (tag) {
-      fetchAppointArticles({
+    // 查询所有文章
+    getAllArticles (tag) {
+      fetchAllArticles({
         articleTags: tag,
         pageSize: this.pageSize,
         currentPage: this.currentPage
@@ -174,6 +156,7 @@ export default {
         // console.log(res)
         if (res.data.code === 0 && res.status === 200) {
           this.articleList = res.data.data
+          this.total = res.data.total
         }
       })
     }
@@ -187,7 +170,7 @@ $back_Color:#f5f5f5;
 $title_Color: #3a8b96;
 $username_Color: #2d5856;
 $font_Color: #b1a9a9;
-$box_shadow: #eee;
+$box_shadow: #d8d5d5;
 .index-container{
   position: relative;
   @include flex-row;
@@ -200,7 +183,7 @@ $box_shadow: #eee;
     border: 1px solid #eee;
     background: $background;
     min-height: 540px;
-    box-shadow: 4px -4px 2px $box_shadow;
+    box-shadow: 0px 0px 10px 0px $box_shadow;
     .list-ul{
       min-height: 500px;
       max-height: 800px;

@@ -11,7 +11,9 @@ function timestampToDate (timestamp = 0) {
 function objToUrlParam (obj = {}) {
   let param = ''
   for (let key in obj) {
-    param += '&' + key + '=' + obj[key]
+    if (obj[key]) {
+      param += '&' + key + '=' + obj[key]
+    }
   }
   return param ? '?' + param.substr(1) : ''
 }

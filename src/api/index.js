@@ -16,10 +16,6 @@ export function fetchAllArticles (obj) {
   return axios.get('/api/fetchAllArticles' + objToUrlParam(obj))
 }
 
-// export function fetchAllArticles () {
-//   return axios.get('/api/fetchAllArticles')
-// }
-
 export function fetchArticleContentById (id) {
   return axios.get(`/api/fetchArticleContentById?id=${id}`)
 }
@@ -30,10 +26,6 @@ export function pushArticle (obj) {
 
 export function deleteArticle (obj) {
   return axios.post('/api/deleteArticle', obj)
-}
-
-export function fetchAppointArticles (obj) {
-  return axios.get('/api/fetchAppointArticles' + objToUrlParam(obj))
 }
 
 export function fetchTagsData () {

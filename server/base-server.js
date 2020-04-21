@@ -37,10 +37,6 @@ module.exports = {
             handler.fetchArticleContentById(req, res)
         })
 
-        app.get('/fetchAppointArticles', (req, res) => {
-            handler.fetchAppointArticles(req, res)
-        })
-
         app.get('/fetchTagsData', (req, res) => {
             handler.fetchTagsData(req, res)
         })

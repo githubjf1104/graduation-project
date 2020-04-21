@@ -46,7 +46,6 @@ module.exports = {
             }
         })
     },
-
     // 发表文章
     pushArticle(req, res) {
         MongoClient.connect(url, config, async (err, db) => {
@@ -126,34 +125,8 @@ module.exports = {
             }
         })
     },
-    // 查询所有文章，分页
+    // 查询文章并分页
     fetchAllArticles(req, res) {
-        MongoClient.connect(url, config, (err, db) => {
-            if (err) throw err
-            const dbo = db.db('blog')
-            const query = req.query
-            const size = ~~query.pageSize
-            const index = ~~query.currentPage
-            dbo.collection(articleCollection).find().skip(size * (index - 1)).limit(size).toArray((err, result) => {
-                if (err) {
-                    res.send({
-                        code: 0,
-                        msg: '查找失败'
-                    })
-                } else {
-                    res.send({
-                        code: 0,
-                        data: result,
-                        total: totalCacheArticles,
-                    })
-                }
-                
-                db.close()
-            })
-        })
-    },
-    // 获取指定文章
-    fetchAppointArticles(req, res) {
         MongoClient.connect(url, config, (err, db) => {
             if (err) throw err
             const dbo = db.db('blog')
@@ -171,6 +144,8 @@ module.exports = {
             } else if (query.articleTitle) {
                 const title = query.articleTitle
                 queryObj.articleTitle = /^.*title.*$/
+            } else if (query.userName) {
+                queryObj.userName = query.userName
             }
             collection.find(queryObj).count((err, num) => {
                 if (err) throw err
