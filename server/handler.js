@@ -5,7 +5,7 @@ const ObjectID = require('mongodb').ObjectID
 const url = 'mongodb://localhost:27017/'
 const config = { useUnifiedTopology: true }
 // 保存文章数据的集合/表
-const articleCollection = 'myBlogArticles'
+const articleCollection = 'articles'
 let tagsCacheData = []
 let tagsArticlesCacheData = {}
 let totalCacheArticles = 0
@@ -15,6 +15,7 @@ let isTagsChange = true
 initData()
 
 module.exports = {
+    // 验证
     vaildToken(req, res) {
         MongoClient.connect(url, config, async (err, db) => {
             if (err) throw err
@@ -46,11 +47,12 @@ module.exports = {
         })
     },
 
+    // 发表文章
     pushArticle(req, res) {
         MongoClient.connect(url, config, async (err, db) => {
             if (err) throw err
             const dbo = db.db('blog')
-            const token = req.get('Authorization')
+            const token = req.get('userToken')
             // 验证 token
             const vaild = await isVaildToken(dbo, token)
             const collection = dbo.collection(articleCollection)
@@ -65,13 +67,15 @@ module.exports = {
             }
 
             if (req.body.id) {
-                const query = { _id: new ObjectID(req.body.id) }
+                const query = { _id: ObjectID(req.body.id) }
                 const body = req.body
                 const updateContent = {
                     $set: { 
-                        content: body.content,
-                        title: body.title,
-                        tags: body.tags
+                        articleTitle: body.articleTitle,
+                        articleType: body.articleType,
+                        articleContent: body.content,
+                        articleTags: body.articleTags,
+                        userName: body.userName
                     }
                 }
 
@@ -93,13 +97,12 @@ module.exports = {
                     db.close()
                 })
             } else {
-                const date = new Date()
+                const date = (new Date()).getTime()
                 const articleData = {
                     ...req.body,
                     date: date,
-                    year: date.getFullYear(),
-                    month: date.getMonth() + 1,
                     comments: [],
+                    likeNum: 0
                 }
                 
                 collection.insertOne(articleData, err => {
@@ -111,7 +114,7 @@ module.exports = {
                     } else {
                         updateTagsData()
                         getAllArticlesNum()
-                        isTagsChange = true
+                        // isTagsChange = true
                         res.send({
                             code: 0,
                             data: '发布成功'
@@ -123,14 +126,14 @@ module.exports = {
             }
         })
     },
-
+    // 查询所有文章，分页
     fetchAllArticles(req, res) {
         MongoClient.connect(url, config, (err, db) => {
             if (err) throw err
             const dbo = db.db('blog')
             const query = req.query
             const size = ~~query.pageSize
-            const index = ~~query.pageIndex
+            const index = ~~query.currentPage
             dbo.collection(articleCollection).find().skip(size * (index - 1)).limit(size).toArray((err, result) => {
                 if (err) {
                     res.send({
@@ -149,7 +152,7 @@ module.exports = {
             })
         })
     },
-
+    // 获取指定文章
     fetchAppointArticles(req, res) {
         MongoClient.connect(url, config, (err, db) => {
             if (err) throw err
@@ -157,14 +160,18 @@ module.exports = {
             const query = req.query
             // ~~取整
             const size = ~~query.pageSize
-            const index = ~~query.pageIndex
+            const index = ~~query.currentPage
             const queryObj = {}
             const collection = dbo.collection(articleCollection)
-            if (query.title) queryObj.title = new RegExp(query.title)
-            if (query.year) queryObj.year = ~~query.year
-            if (query.month) queryObj.month = ~~query.month
-            if (query.tags) queryObj.tags = query.tags
-
+            if (query.articleType){
+                queryObj.articleType = query.articleType
+            } else if (query.articleTags) {
+                let tag = query.articleTags
+                queryObj.articleTags = {$elemMatch:{$eq:tag}}
+            } else if (query.articleTitle) {
+                const title = query.articleTitle
+                queryObj.articleTitle = /^.*title.*$/
+            }
             collection.find(queryObj).count((err, num) => {
                 if (err) throw err
                 collection.find(queryObj).skip(size * (index - 1)).limit(size).toArray((err, result) => {
@@ -187,7 +194,33 @@ module.exports = {
             })
         })
     },
-
+    // 根据_id获取文章
+    fetchArticleContentById (req, res) {
+      MongoClient.connect(url, config, (err, db) => {
+        if (err) throw err
+        const dbo = db.db('blog')
+        const query = { _id: ObjectID(req.query.id) }
+        const collection = dbo.collection(articleCollection)
+        collection.findOne(query).then(result => {
+            if (!result) {
+                res.send({
+                    code: 1,
+                    msg: '获取失败'
+                })
+            } else {
+                // updateTagsData()
+                getAllArticlesNum()
+                res.send({
+                    code: 0,
+                    data: result,
+                    msg: '获取成功'
+                })
+            }
+            
+            db.close()
+        })
+      })
+    },
     deleteArticle(req, res) {
         MongoClient.connect(url, config, async (err, db) => {
             if (err) throw err
@@ -195,7 +228,7 @@ module.exports = {
             const token = req.get('Authorization')
             // 验证 token
             const vaild = await isVaildToken(dbo, token)
-            const query = { _id: new ObjectID(req.body.id) }
+            const query = { _id: ObjectID(req.body.id) }
             if (!vaild) {
                 res.send({
                     code: 1,
@@ -374,7 +407,7 @@ module.exports = {
             if (err) throw err
             const dbo = db.db('blog')
             const { comment, id } = req.body
-            const query = { _id: new ObjectID(id) }
+            const query = { _id: ObjectID(id) }
             const time = new Date()
             const ip = getClientIp(req)
             // 更新评论

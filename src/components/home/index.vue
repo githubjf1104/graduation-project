@@ -1,29 +1,37 @@
 <template>
     <div class="index-container">
       <div class=index-left>
-        <ul>
-          <li class="article-list" v-for="(article, index) in articlelist" :key="index">
-            <div class="headportrait">
-              <img :src="article.headportrait" alt="用户头像" width="45" height="45">
-            </div>
+        <ul class="list-ul">
+          <li class="article-list" v-for="(article, index) in articleList" :key="index">
             <div class="article-content">
-              <div class="article-title">
-                <h2 :title="article.textTitle">{{article.textTitle}}</h2>
+              <div class="article-title" @click="getCurrentArticleContent(article._id)">
+                <h2 :title="article.articleTitle">{{article.articleTitle}}</h2>
               </div>
+              <div class="content-detail" @click="getCurrentArticleContent(article._id)">{{article.articleContent | handleContentHTML}}</div>
               <div class="article-detail">
-                 <div class="username">{{article.username}}</div>
-                 <span class="article-tag" v-for="(tag, index) in article.tag" :key="index">{{tag}}</span>
+                 <div class="username">{{article.userName}}</div>
+                 <span class="article-tag" v-for="(tag, index) in article.articleTags" :key="index">{{tag}}</span>
               </div>
             </div>
             <div class="article-info">
-              <div class="posttime">{{article.posttime | timeFormat}}</div>
+              <div class="posttime">{{article.date | timeFormat}}</div>
               <div class="info-count">
                 <span class="iconfont">&#xe601;</span>
-                <span class="count">{{article.commentCount}}</span>
+                <span class="count">{{article.comments.length}}</span>
               </div>
             </div>
          </li>
        </ul>
+       <div class="paganation">
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="currentPage"
+            :page-size="pageSize"
+            layout="prev, pager, next"
+            :total="total">
+          </el-pagination>
+       </div>
       </div>
       <div class="index-right">
         <div class="index-info">
@@ -33,10 +41,7 @@
             <div class="index-username">
                 <ul>
                   <li class="author-list" v-for="(author, index) in indexAuthor" :key="index">
-                    <div class="headportrait">
-                      <img :src="author.headportrait" alt="用户头像" height="40" width="40">
-                    </div>
-                    <div class="username">{{author.username}}--{{author.likeCount}}</div>
+                    <div class="username">{{author.userName}}</div>
                   </li>
                 </ul>
                 <div class="all-list"><span>榜单</span><i class="iconfont">&#xe70c;</i></div>
@@ -52,46 +57,49 @@
         <div class="index-article" ref="index-article">
           <div class="hotarticle-list"></div>
           <ul>
-            <li class="title-list" v-for="(title, index) in hostArticle" :key="index">
-              <div class="title">{{title.textTitle}}</div>
+            <li class="title-list" v-for="(item, index) in hostArticle" :key="index">
+              <div class="title">{{item.articleTitle}}</div>
             </li>
           </ul>
         </div>
       </div>
     </div>
 </template>
-
 <script>
+import { fetchAllArticles, fetchArticleContentById, fetchAppointArticles } from '@/api/index'
+
 export default {
   name: 'Index',
   props: {
-    articlelist: {
-      type: Array,
-      default () {
-        return []
-      }
-    }
   },
   components: {
   },
   data () {
     return {
+      articleList: [],
+      pageSize: 6,
+      currentPage: 1,
+      total: 0,
       pickervalue: new Date()
     }
   },
   computed: {
     // 作者列表
     indexAuthor () {
-      return this.articlelist.slice(0, 4)
-    },
-    indexArticle () {
-      return this.handleArticleList()
+      return this.articleList.slice(0, 4)
     },
     hostArticle () {
-      return this.articlelist.slice(0, 6)
+      return this.articleList.slice(0, 6)
     }
   },
   created () {
+    this.getArticleData()
+    this.Bus.$on('handlesearch', tag => {
+      // this.articleList = this.articleList.filter(article => {
+      //   return article.articleTags.indexOf(tag) !== -1
+      // })
+      this.getAppointArticle(tag)
+    })
   },
   mounted () {
   },
@@ -111,13 +119,62 @@ export default {
         return num > 10 ? num : '0' + num
       }
       return timeWithZero(year) + '-' + timeWithZero(month) + '-' + timeWithZero(day)
+    },
+    handleContentHTML (content) {
+      let reg = /<[^>]+>/g
+      return content.replace(reg, '')
     }
   },
   methods: {
-    // 文章列表
-    handleArticleList () {
-      return this.articlelist.sort((o1, o2) => {
-        return o2.posttime - o1.posttime
+    // 获取后台数据
+    getArticleData () {
+      fetchAllArticles({
+        pageSize: this.pageSize,
+        currentPage: this.currentPage
+      }).then(res => {
+        if (res.data.code === 0 && res.status === 200) {
+          this.articleList = res.data.data
+          this.total = res.data.total
+        }
+      }).catch(err => {
+        console.log(err)
+        this.$message.error('获取文章失败')
+      })
+    },
+    // 分页
+    handleSizeChange (val) {
+      // console.log(`每页 ${val} 条`)
+      this.pageSize = val
+      this.currentPage = 1
+      this.getArticleData()
+    },
+    handleCurrentChange (val) {
+      // console.log(`当前页: ${val}`)
+      this.currentPage = val
+      this.getArticleData()
+    },
+    // 获取选择文章内容
+    getCurrentArticleContent (id) {
+      fetchArticleContentById(id).then(res => {
+        // console.log(res)
+        if (res.data.code === 0 && res.status === 200) {
+          this.$router.push({name: 'Detail', params: {articleData: res.data.data}})
+        }
+      }).catch(() => {
+        this.$message.info('获取文章内容失败')
+      })
+    },
+    // 根据标签查询文章
+    getAppointArticle (tag) {
+      fetchAppointArticles({
+        articleTags: tag,
+        pageSize: this.pageSize,
+        currentPage: this.currentPage
+      }).then(res => {
+        // console.log(res)
+        if (res.data.code === 0 && res.status === 200) {
+          this.articleList = res.data.data
+        }
       })
     }
   }
@@ -138,83 +195,96 @@ $box_shadow: #eee;
   max-width: 960px;
   margin: 20px auto 0 auto;
   .index-left{
+    position: relative;
     flex: 1;
     border: 1px solid #eee;
     background: $background;
+    min-height: 540px;
     box-shadow: 4px -4px 2px $box_shadow;
-    .article-list{
-      @include flex-row;
-      padding: 20px;
-      border-bottom: 1px solid $back_Color;
-      font-size: 0;
-      .headportrait{
-        width: 45px;
-        margin-right: 20px;
-      }
-      .article-content{
-        @include flex-col;
-        flex: 1;
-        width: 0;
-        .article-title{
-          width: 80%;
-          font-size: 16px;
-          font-weight: 600;
-          color: $title_Color;
-          cursor: pointer;
-          &:hover{
-            color: $username_Color;
-          }
-          h2{
-            @include ellipsis;
-          }
-        }
-      }
-      .article-detail{
+    .list-ul{
+      min-height: 500px;
+      max-height: 800px;
+      .article-list{
         @include flex-row;
-        margin-top: 14px;
-        font-size: 13px;
-        color: $font_Color;
-        .username{
-          min-width: 50px;
-          margin-right: 20px;
-          cursor: pointer;
-          &:hover{
-            color: $username_Color;
-          }
-        }
-        .article-tag{
-          min-width: 25px;
-          padding: 0 5px;
-        }
-      }
-      .article-info{
-        color: $font_Color;
-        min-width: 60px;
-        .posttime{
-          height: 20px;
-          line-height: 20px;
-          font-size: 13px;
-        }
-        .info-count{
-          padding-top: 5px;
-          font-size: 0;
-          color: $font_Color;
-          .iconfont{
-            height: 20px;
-            line-height: 20px;
-            padding-right: 5px;
+        padding: 18px 24px;
+        border-bottom: 1px solid $back_Color;
+        font-size: 0;
+        .article-content{
+          @include flex-col;
+          flex: 1;
+          width: 0;
+          .article-title{
+            width: 80%;
             font-size: 16px;
-            line-height: 20px;
+            font-weight: 600;
+            color: $title_Color;
             cursor: pointer;
             &:hover{
-              color: #292828;
+              color: $username_Color;
+            }
+            h2{
+              @include ellipsis;
             }
           }
-          .count{
-            font-size: 14px;
+          .content-detail{
+            font-size: 12px;
+            margin: 10px 20px 0 0;
+            color: rgb(117, 111, 111);
+            cursor: pointer;
+            @include ellipsis;
+          }
+          .article-detail{
+            @include flex-row;
+            margin-top: 14px;
+            font-size: 13px;
+            color: $font_Color;
+            .username{
+              min-width: 50px;
+              margin-right: 20px;
+              cursor: pointer;
+              &:hover{
+                color: $username_Color;
+              }
+            }
+            .article-tag{
+              min-width: 25px;
+              padding: 0 5px;
+            }
+          }
+        }
+        .article-info{
+          color: $font_Color;
+          min-width: 60px;
+          .posttime{
+            height: 20px;
+            line-height: 20px;
+            font-size: 13px;
+          }
+          .info-count{
+            padding-top: 5px;
+            font-size: 0;
+            color: $font_Color;
+            .iconfont{
+              height: 20px;
+              line-height: 20px;
+              padding-right: 5px;
+              font-size: 16px;
+              line-height: 20px;
+              cursor: pointer;
+              &:hover{
+                color: #292828;
+              }
+            }
+            .count{
+              font-size: 14px;
+            }
           }
         }
       }
+    }
+    .paganation{
+      @include flex-row;
+      justify-content: flex-end;
     }
   }
   .index-right{

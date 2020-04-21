@@ -7,13 +7,28 @@
           <div class="register-close iconfont" @click="handleregiterClose">&#xe75d;</div>
             <el-form :model="registerRuleForm" status-icon :rules="rules" ref="registerRuleForm" label-width="100px" class="demo-ruleForm">
               <el-form-item label="用户名" prop="username">
-                  <el-input v-model="registerRuleForm.username"></el-input>
+                  <el-input
+                    type="text"
+                    v-model="registerRuleForm.username"
+                    autocomplete="off"
+                    @keyup.enter.native="handleRegiterInputFocus('password')">
+                  </el-input>
               </el-form-item>
               <el-form-item label="密码" prop="userpwd">
-                  <el-input type="password" v-model="registerRuleForm.userpwd" autocomplete="off"></el-input>
+                  <el-input
+                    type="password"
+                    ref="password"
+                    v-model="registerRuleForm.userpwd"
+                    autocomplete="off"
+                    @keyup.enter.native="handleRegiterInputFocus('checkpwd')"></el-input>
               </el-form-item>
               <el-form-item label="确认密码" prop="checkpwd">
-                  <el-input type="password" v-model="registerRuleForm.checkpwd" autocomplete="off"></el-input>
+                  <el-input
+                    type="password"
+                    ref="checkpwd"
+                    v-model="registerRuleForm.checkpwd"
+                    autocomplete="off"
+                    @keyup.enter.native="registerSubmit('registerRuleForm')"></el-input>
               </el-form-item>
               <el-form-item>
                   <el-button type="primary" @click="registerSubmit('registerRuleForm')">注册</el-button>
@@ -85,6 +100,14 @@ export default {
       // this.$router.back()
       this.$router.push('/index')
     },
+    // enter事件
+    handleRegiterInputFocus (refName) {
+      if (refName === 'password') {
+        this.$refs.password.focus()
+      } else {
+        this.$refs.checkpwd.focus()
+      }
+    },
     registerSubmit (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -137,8 +160,9 @@ $login_Color:#f5f5f5;
   backdrop-filter: blur(3px);
   &::before{
     position:absolute;
-    //一定要设置position:absolute,这样才能设置z-index，让背景处于内容的下一层
-    background-image: url('../../assets/img/login-back.jpg');
+    // 一定要设置position:absolute,这样才能设置z-index，让背景处于内容的下一层
+    // background-image: url('../../assets/img/login-back.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../../assets/img/login-back.jpg');
     background-repeat: no-repeat;
     background-size: cover;
     height: 100%;

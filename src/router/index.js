@@ -20,6 +20,11 @@ export default new Router({
       component: () => import('@/components/home/Index.vue')
     },
     {
+      path: '/detail',
+      name: 'Detail',
+      component: () => import('@/components/details/Detail.vue')
+    },
+    {
       path: '/category',
       name: 'Category',
       redirect: '/category/commonView',
@@ -34,6 +39,33 @@ export default new Router({
       path: '/edit',
       name: 'Eidt',
       component: () => import('@/components/edit/Edit.vue')
+    },
+    {
+      path: '/personal',
+      name: 'Personal',
+      component: () => import('@/components/personal/Personal.vue'),
+      beforeEnter (to, from, next) {
+        if (to.name === 'Personal') {
+          next({name: 'PersonArticle'})
+        } else {
+          next()
+        }
+      },
+      children: [{
+        path: 'askQuestion',
+        name: 'AskQuestion',
+        component: () => import('@/components/personal/components/AskQuestion.vue')
+      },
+      {
+        path: 'personArticle',
+        name: 'PersonArticle',
+        component: () => import('@/components/personal/components/PersonArticle.vue')
+      },
+      {
+        path: 'replay',
+        name: 'Replay',
+        component: () => import('@/components/personal/components/Reply.vue')
+      }]
     },
     {
       path: '/login',

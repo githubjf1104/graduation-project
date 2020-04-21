@@ -2,11 +2,11 @@
     <div class="panel">
         <div class="btn-like">
             <span class="iconfont">&#xe60c;</span>
-            <span class="like-count">10</span>
+            <span class="like-count">{{likeNum}}</span>
         </div>
         <div class="btn-comment">
             <span class="iconfont">&#xe601;</span>
-            <span class="comment-count">10</span>
+            <span class="comment-count">{{commentNum}}</span>
         </div>
         <div class="btn-collect">
             <span class="iconfont">&#xe600;</span>
@@ -16,7 +16,15 @@
 </template>
 <script>
 export default {
-  name: 'panel'
+  name: 'panel',
+  props: {
+    likeNum: {
+      type: Number
+    },
+    commentNum: {
+      type: Number
+    }
+  }
 }
 </script>
 <style lang='scss' scoped>

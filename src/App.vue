@@ -5,7 +5,7 @@
       </div>
       <div class="index-main">
         <transition name="fade">
-            <router-view :articlelist="searchlist"/>
+            <router-view/>
         </transition>
       </div>
   </div>
@@ -13,7 +13,6 @@
 
 <script>
 import vNav from '@/components/nav/Nav.vue'
-const CODE_OK = 200
 
 export default {
   name: 'App',
@@ -28,9 +27,7 @@ export default {
   },
   computed: {
   },
-  created () {
-    this.getArticleData()
-  },
+  created () {},
   mounted () {
   },
   methods: {
@@ -38,15 +35,6 @@ export default {
     handleSearch (tag) {
       this.searchlist = this.articleList.filter(article => {
         return article.tag.indexOf(tag) !== -1
-      })
-    },
-    // 获取后台数据
-    getArticleData () {
-      this.$axios.get('/api/article').then((res) => {
-        if (res.status === CODE_OK && res.data.code === CODE_OK) {
-          this.articleList = JSON.parse(JSON.stringify(res.data.data))
-          this.searchlist = JSON.parse(JSON.stringify(res.data.data))
-        }
       })
     }
   }

@@ -1,4 +1,3 @@
-// import axios from 'axios'
 
 function timestampToDate (timestamp = 0) {
   if (/\s/.test(timestamp)) {
@@ -25,24 +24,9 @@ function formatVisits (visits = 0) {
   return visits ? (visits + '').replace(/(\d)(?=(?:\d{3})+$)/g, '$1,') : 0
 }
 
-// function request (url, method, data) {
-//   if (method === 'get') {clear
-//     axios.get(url, {
-//       params: data,
-//       headers: {'Authorization': localStorage.getItem('token')}
-//     })
-//   } else {
-//     axios.post(url, {
-//       params: data,
-//       headers: {'Authorization': localStorage.getItem('token')}
-//     })
-//   }
-// }
-
 module.exports = {
   timestampToDate,
   objToUrlParam,
   formatIP,
   formatVisits
-  // request
 }

@@ -6,6 +6,11 @@ const port = 8081
 
 module.exports = {
     config(app) {
+        // 使用 body-parser 中间件
+        /**
+          *express生成一个网站，它默认已经使用了bodyParser.json与bodyParser.urlencoded的解析功能，
+          *除了这两个，bodyParser还支持对text、raw的解析
+         */
         app.use(bodyParser.urlencoded({ extended: false }))
         app.use(bodyParser.json())
         app.use(express.static('dist')) // 将dist设为根目录
@@ -28,8 +33,8 @@ module.exports = {
             handler.deleteArticle(req, res)
         })
 
-        app.get('/fetchArticleContent', (req, res) => {
-            handler.fetchArticleContent(req, res)
+        app.get('/fetchArticleContentById', (req, res) => {
+            handler.fetchArticleContentById(req, res)
         })
 
         app.get('/fetchAppointArticles', (req, res) => {

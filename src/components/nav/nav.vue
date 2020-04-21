@@ -74,7 +74,7 @@ export default {
       this.isDropdown = !this.isDropdown
     },
     handleSearch (tag) {
-      this.$emit('handlesearch', tag)
+      this.Bus.$emit('handlesearch', tag)
     },
     // 登录
     handleLogin () {
@@ -109,6 +109,17 @@ export default {
             type: 'info',
             message: '取消退出'
           })
+        })
+      } else if (command === 'personal') {
+        vaildToken().then(res => {
+          if (res.data.code === 0) {
+            this.$router.push('/personal')
+          } else {
+            this.$message({
+              type: 'info',
+              message: '请登录后再发表文章'
+            })
+          }
         })
       }
     },

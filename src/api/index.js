@@ -16,8 +16,12 @@ export function fetchAllArticles (obj) {
   return axios.get('/api/fetchAllArticles' + objToUrlParam(obj))
 }
 
-export function fetchArticleContent (id) {
-  return axios.get(`/api/fetchArticleContent?id=${id}`)
+// export function fetchAllArticles () {
+//   return axios.get('/api/fetchAllArticles')
+// }
+
+export function fetchArticleContentById (id) {
+  return axios.get(`/api/fetchArticleContentById?id=${id}`)
 }
 
 export function pushArticle (obj) {

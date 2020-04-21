@@ -7,10 +7,21 @@
       <div class="login-close iconfont" @click="handleLoginClose">&#xe75d;</div>
         <el-form :model="loginRuleForm" status-icon :rules="rules" ref="loginRuleForm" label-width="100px" class="demo-ruleForm">
           <el-form-item label="用户名" prop="username">
-              <el-input type="text" v-model="loginRuleForm.username" autocomplete="off"></el-input>
+              <el-input
+                type="text"
+                v-model.trim="loginRuleForm.username"
+                autocomplete="off"
+                @keyup.enter.native="handleLoginInputFocus()">
+              </el-input>
           </el-form-item>
           <el-form-item label="密码" prop="userpwd">
-              <el-input type="password" v-model="loginRuleForm.userpwd" autocomplete="off"></el-input>
+              <el-input
+                 type="password"
+                 v-model.trim="loginRuleForm.userpwd"
+                 ref="password"
+                 autocomplete="off"
+                 @keyup.enter.native="submitForm('loginRuleForm')">
+              /</el-input>
           </el-form-item>
           <el-form-item>
               <el-button type="primary" @click="submitForm('loginRuleForm')">登录</el-button>
@@ -22,6 +33,7 @@
 </template>
 <script>
 import { login } from '@/api/index'
+
 export default {
   name: 'Login',
   data () {
@@ -67,6 +79,10 @@ export default {
     handleLoginClose () {
       // this.$router.back()
       this.$router.push('/index')
+    },
+    // 处理input enter事件
+    handleLoginInputFocus () {
+      this.$refs.password.focus()
     },
     // 提交表单
     submitForm (formName) {
@@ -117,7 +133,8 @@ $back_Color:#f5f5f5;
   &::before{
     position:absolute;
     //一定要设置position:absolute,这样才能设置z-index，让背景处于内容的下一层
-    background-image: url('../../assets/img/login-back.jpg');
+    // background-image: url('../../assets/img/login-back.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('../../assets/img/login-back.jpg');
     background-repeat: no-repeat;
     background-size: cover;
     height: 100%;

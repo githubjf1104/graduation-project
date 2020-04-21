@@ -3,9 +3,9 @@
       <div class="category-slider">
         <div class="slider-nav">
           <ul class="nav-list">
-            <li class="nav-item recommend">
+            <!-- <li class="nav-item recommend">
               <router-link to="/category/commonView">推荐</router-link>
-            </li>
+            </li> -->
             <li class="item-line"></li>
             <li class="nav-item">专业类别
               <ul class="item-list">
@@ -98,7 +98,7 @@ export default {
         category: '考研',
         value: 6
       }],
-      sliderCategoryIndex: -1,
+      sliderCategoryIndex: 0,
       sliderPublicIndex: -1,
       categoryArticle: []
     }

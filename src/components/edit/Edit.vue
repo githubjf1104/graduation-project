@@ -1,8 +1,19 @@
 <template>
     <div class="edit-wrapper">
-      <div class="edit-title">
+      <div class="edit-header">
         <span class="title">标题</span>
-        <input class="tilte-input" type="text" v-model="artileTitle">
+        <input class="tilte-input" type="text" v-model="title">
+        <div class="article-type">
+          <span class="type">文章类型</span>
+          <el-select v-model="articleType" placeholder="请选择">
+            <el-option
+              v-for="item in articleTypeList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </div>
       </div>
       <div class="mavon-editor">
         <mavon-editor v-model="content"
@@ -48,17 +59,48 @@
     </div>
 </template>
 <script>
+import { pushArticle } from '@/api/index'
+
 export default {
   name: 'edit',
   data () {
     return {
       content: '',
-      html: 'preview',
+      html: '',
       showAddTag: false,
       tagsList: [],
       inputVisible: false,
       tagValue: '',
-      artileTitle: ''
+      title: '',
+      articleType: '',
+      articleTypeList: [{
+        label: '软件工程',
+        value: '软件工程'
+      },
+      {
+        label: '计算机',
+        value: '计算机'
+      },
+      {
+        label: '数学与金融',
+        value: '数学与金融'
+      },
+      {
+        label: '教育',
+        value: '教育'
+      },
+      {
+        label: '艺术',
+        value: '艺术'
+      },
+      {
+        label: '就业',
+        value: '就业'
+      },
+      {
+        label: '考研',
+        value: 6
+      }]
     }
   },
   created () {
@@ -68,7 +110,7 @@ export default {
     change (value, render) {
       // render 为 markdown 解析后的结果[html]
       this.html = render
-      console.log(render)
+      // console.log(render)
     },
     // 将图片上传到服务器，返回地址替换到md中
     handleAddImg (pos, $file) {
@@ -102,8 +144,28 @@ export default {
     },
     // 发表文章
     handlePublish () {
-      this.showAddTag = false
-      this.$message.success('发表成功')
+      const userName = localStorage.getItem('username')
+      const articleObj = {
+        articleTitle: this.title,
+        articleType: this.articleType,
+        articleContent: this.html,
+        articleTags: this.tagsList,
+        userName: userName
+      }
+      pushArticle(articleObj).then(res => {
+        if (res.data.code === 0 && res.status === 200) {
+          this.showAddTag = false
+          this.$message.success('发表成功')
+          this.quit()
+        } else if (res.data.code === 1) {
+          localStorage.setItem('token', '')
+          this.$router.push('login')
+          this.$message.error(res.data.msg)
+        }
+      }).catch(() => {
+        localStorage.setItem('token', '')
+        this.$router.push('login')
+      })
     },
     // 删除标签
     handleClose (tag) {
@@ -139,7 +201,7 @@ export default {
   width: 100%;
   background: #fff;
   overflow: auto;
-  .edit-title{
+  .edit-header{
     position: fixed;
     top: 0;
     left: 0;
@@ -159,10 +221,21 @@ export default {
     .tilte-input{
       flex: 1;
       display: inline-block;
-      margin: 0 60px 0 20px;
+      margin: 0 20px;
+      padding: 0 10px;
       font-size: 16px;
       border: 1px solid #eee;
       border-radius: 5px;
+    }
+    .article-type{
+      min-width: 200px;
+      margin-right: 40px;
+      .type{
+        margin-right: 20px;
+        font-size: 16px;
+        line-height: 40px;
+        font-weight: bold;
+      }
     }
   }
   .mavon-editor{
