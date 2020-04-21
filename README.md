@@ -5,6 +5,15 @@
 ## Build Setup
 
 ``` bash
+## 后台
+# 安装MongoDB
+# 打开mongdb.exe
+# 进入server文件夹
+cd server
+#运行后台
+node dev-server.js
+
+## 前端
 # install dependencies
 npm install
 
