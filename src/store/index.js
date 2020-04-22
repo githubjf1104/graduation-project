@@ -7,8 +7,8 @@ const store = new Vuex.Store({
     username: ''
   },
   mutations: {
-    saveUsername (state, username) {
-      state.username = username
+    saveUsername (state, payload) {
+      state.username = payload
     }
   },
   actions: {

@@ -3,9 +3,6 @@
       <div class="category-slider">
         <div class="slider-nav">
           <ul class="nav-list">
-            <!-- <li class="nav-item recommend">
-              <router-link to="/category/commonView">推荐</router-link>
-            </li> -->
             <li class="item-line"></li>
             <li class="nav-item">专业类别
               <ul class="item-list">
@@ -35,18 +32,30 @@
         </div>
       </div>
       <div class="category-middle">
-        <common-view :articlelist="articlelist"></common-view>
+        <div class="common-view">
+          <common-view :categoryarticle="categoryArticle"></common-view>
+        </div>
+        <div class="pagenation">
+           <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="currentPage"
+            :page-size="pageSize"
+            layout="prev, pager, next"
+            :total="total">
+          </el-pagination>
+        </div>
       </div>
       <div class="category-right">
         <div class="person-info">
           <div class="profile">
             <span class="iconfont">&#xe6bf;</span>
-            <span class="username">username</span>
+            <span class="username">{{username}}</span>
           </div>
           <div class="user-list">
             <div class="article">
               <p>文章</p>
-              <p class="count">0</p>
+              <p class="count">{{categoryArticle.length}}</p>
             </div>
              <div class="focus">
               <p>关注</p>
@@ -59,12 +68,11 @@
     </div>
 </template>
 <script>
-import commonView from '@/components/category/component/CommonView.vue'
+import commonView from '@/components/common/CommonView.vue'
+import { fetchAllArticles } from '@/api/index'
+
 export default {
   name: 'category',
-  props: {
-    articlelist: Array
-  },
   components: {
     commonView
   },
@@ -100,13 +108,27 @@ export default {
       }],
       sliderCategoryIndex: 0,
       sliderPublicIndex: -1,
-      categoryArticle: []
+      categoryArticle: [],
+      pageSize: 6,
+      currentPage: 1,
+      total: 0,
+      articleType: '软件工程',
+      tag: ''
     }
   },
+  created () {
+    this.getCategoryArticles()
+    // this.Bus.$on('handlesearch', tag => {
+    //   this.tag = tag
+    //   this.currentPage = 1
+    //   this.getCategoryArticles()
+    // })
+    this.username = localStorage.getItem('username')
+  },
   mounted () {
-    this.categoryArticle = this.articlelist.slice(0, 10)
   },
   computed: {
+    // ...mapState['username'],
     professionalCategory () {
       return this.sliderData.slice(0, 5)
     },
@@ -115,9 +137,36 @@ export default {
     }
   },
   methods: {
+    // 获取专栏文章信息
+    getCategoryArticles () {
+      fetchAllArticles({
+        articleType: this.articleType,
+        pageSize: this.pageSize,
+        currentPage: this.currentPage
+      }).then(res => {
+        if (res.data.code === 0 && res.status === 200) {
+          this.categoryArticle = res.data.data
+          this.total = res.data.total
+        }
+      })
+    },
+    // 分页
+    handleSizeChange (val) {
+      // console.log(`每页 ${val} 条`)
+      this.pageSize = val
+      this.currentPage = 1
+      this.getCategoryArticles()
+    },
+    handleCurrentChange (val) {
+      // console.log(`当前页: ${val}`)
+      this.currentPage = val
+      this.getCategoryArticles()
+    },
     // 切换路由
     handleCategory (categoryItem) {
       this.sliderCategoryIndex = categoryItem.value
+      this.articleType = categoryItem.category
+      this.getCategoryArticles()
     },
     // 处理样式
     handleSliderStyle (value) {
@@ -129,6 +178,9 @@ export default {
     },
     handlePublic (publicItem) {
       this.sliderPublicIndex = publicItem.value
+      this.articleType = publicItem.category
+      console.log(this.articleType)
+      this.getCategoryArticles()
     }
   }
 }
@@ -212,6 +264,16 @@ $box_shadow: #eee;
     border-radius: 2px;
     border: 1px solid $box_shadow;
     box-shadow: 4px -4px 2px $box_shadow;
+    .common-view{
+      min-height: 540px;
+      max-height: 800px;
+      padding: 0 20px;
+    }
+    .pagenation{
+      margin-top: 20px;
+      @include flex-row;
+      justify-content: flex-end;
+    }
   }
   .category-right{
     flex: 0 0 248px;

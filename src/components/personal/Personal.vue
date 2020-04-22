@@ -1,5 +1,6 @@
 <template>
-    <div class="personal-wrappwer">
+    <div class="personal-wrapper">
+      <div class="personal-left">
         <div class="personal-header">
            <div class="bg"></div>
             <div class="personal-name">{{username}}</div>
@@ -17,12 +18,17 @@
                  </router-link>
             </div>
             <div class="content-item">
-              <router-view/>
+              <router-view :username="username"/>
             </div>
         </div>
+      </div>
+      <div class="personal-right">
+        <div class="right-content"></div>
+      </div>
     </div>
 </template>
 <script>
+
 export default {
   name: 'personal',
   data () {
@@ -33,20 +39,24 @@ export default {
         label: '文章',
         value: 0,
         path: '/personal/personArticle'
-      }, {
-        label: '提问',
-        value: 1,
-        path: '/personal/askQuestion'
-      }, {
-        label: '答复',
+      },
+      {
+        label: '等待答复',
         value: 2,
-        path: '/personal/replay'
+        path: '/personal/waitReply'
       }]
     }
   },
   created () {
-    this.username = localStorage.getItem('username')
+    // debugger
+    let username = this.$route.params.username
+    if (username) {
+      this.username = username
+    } else {
+      this.username = localStorage.getItem('username')
+    }
   },
+  computed: {},
   methods: {
     navLinkItemsClick (value) {
       this.itemChild = value
@@ -64,11 +74,15 @@ export default {
 <style lang='scss' scoped>
 @import '../../assets/scss/mixin.scss';
 
-.personal-wrappwer{
-    position: relative;
+.personal-wrapper{
+  position: relative;
+  @include flex-row;
+  max-width: 960px;
+  margin: 20px auto 0 auto;
+  .personal-left{
+    flex: 1;
+    width: 0;
     @include flex-col;
-    max-width: 960px;
-    margin: 20px auto 0 auto;
     .personal-header{
       height: 150px;
       width: 100%;
@@ -93,17 +107,18 @@ export default {
       margin-top: 20px;
       background: #fff;
       .conten-info{
-         height: 50px;
-         width: 100%;
-         line-height: 50px;
-         border-bottom: 1px solid #eee;
-         font-size: 0;
+          height: 50px;
+          width: 100%;
+          line-height: 50px;
+          border-bottom: 1px solid #eee;
+          font-size: 0;
         .link-item{
           display: inline-block;
           min-width: 60px;
           text-align: center;
           font-size: 16px;
           font-weight: 400;
+          padding: 0 10px;
           color: #000;
           &:hover{
             background: rgb(138, 182, 245);
@@ -112,8 +127,20 @@ export default {
         }
       }
       .content-item{
-         flex: 1;
+        flex: 1;
+        padding: 20px;
       }
     }
+  }
+  .personal-right{
+    width: 200px;
+    margin-left: 20px;
+    .right-content{
+      position: fixed;
+      min-height: 400px;
+      width: 100%;
+      background: #fff;
+    }
+  }
 }
 </style>

@@ -9,7 +9,7 @@
               </div>
               <div class="content-detail" @click="getCurrentArticleContent(article._id)">{{article.articleContent | handleContentHTML}}</div>
               <div class="article-detail">
-                 <div class="username">{{article.userName}}</div>
+                 <div class="username" @click="handleToPersonalDetail(article.userName)">{{article.userName}}</div>
                  <span class="article-tag" v-for="(tag, index) in article.articleTags" :key="index">{{tag}}</span>
               </div>
             </div>
@@ -41,7 +41,7 @@
             <div class="index-username">
                 <ul>
                   <li class="author-list" v-for="(author, index) in indexAuthor" :key="index">
-                    <div class="username">{{author.userName}}</div>
+                    <div class="username" @click="handleToPersonalDetail(author.userName)">{{author.userName}}</div>
                   </li>
                 </ul>
                 <div class="all-list"><span>榜单</span><i class="iconfont">&#xe70c;</i></div>
@@ -58,7 +58,7 @@
           <div class="hotarticle-list"></div>
           <ul>
             <li class="title-list" v-for="(item, index) in hostArticle" :key="index">
-              <div class="title">{{item.articleTitle}}</div>
+              <div class="title" @click="getCurrentArticleContent(item._id)">{{item.articleTitle}}</div>
             </li>
           </ul>
         </div>
@@ -80,6 +80,7 @@ export default {
       pageSize: 6,
       currentPage: 1,
       total: 0,
+      tag: '',
       pickervalue: new Date()
     }
   },
@@ -95,33 +96,14 @@ export default {
   created () {
     this.getAllArticles()
     this.Bus.$on('handlesearch', tag => {
-      this.getAllArticles(tag)
+      this.tag = tag
+      this.currentPage = 1
+      this.getAllArticles()
     })
   },
   mounted () {
   },
-  filters: {
-    timeFormat (time) {
-      let date = new Date(time)
-      let year = date.getFullYear()
-      let month = date.getMonth() + 1
-      let day = date.getDate()
-      // let hour = date.getHours() < 10 ? '0' + date.getHours() : date.getHours()
-      // let min = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()
-      // let seconds = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
-      // return `${year}-${month}-${day} ${hour}:${min}:${seconds}`
-      // return `${year}-${month}-${day}`
-      // 格式时间
-      function timeWithZero (num) {
-        return num > 10 ? num : '0' + num
-      }
-      return timeWithZero(year) + '-' + timeWithZero(month) + '-' + timeWithZero(day)
-    },
-    handleContentHTML (content) {
-      let reg = /<[^>]+>/g
-      return content.replace(reg, '')
-    }
-  },
+  filters: {},
   methods: {
     // 分页
     handleSizeChange (val) {
@@ -147,9 +129,9 @@ export default {
       })
     },
     // 查询所有文章
-    getAllArticles (tag) {
+    getAllArticles () {
       fetchAllArticles({
-        articleTags: tag,
+        articleTags: this.tag,
         pageSize: this.pageSize,
         currentPage: this.currentPage
       }).then(res => {
@@ -159,6 +141,10 @@ export default {
           this.total = res.data.total
         }
       })
+    },
+    // 转到用户个人中心
+    handleToPersonalDetail (name) {
+      this.$router.push({name: 'PersonArticle', params: {username: name}})
     }
   }
 }
@@ -185,7 +171,7 @@ $box_shadow: #d8d5d5;
     min-height: 540px;
     box-shadow: 0px 0px 10px 0px $box_shadow;
     .list-ul{
-      min-height: 500px;
+      min-height: 540px;
       max-height: 800px;
       .article-list{
         @include flex-row;
@@ -274,10 +260,10 @@ $box_shadow: #d8d5d5;
     @include flex-col;
     width: 240px;
     margin-left: 16px;
-    box-shadow: 4px -4px 2px $box_shadow;
     .index-info{
       background: $background;
       border: 1px solid #eee;
+      box-shadow: 1px 0px 10px 0 $box_shadow;
       .author-word{
         height: 30px;
         line-height: 30px;
@@ -333,6 +319,7 @@ $box_shadow: #d8d5d5;
     }
     .index-calendar{
       margin-top: 20px;
+      box-shadow: 1px 0px 10px 0 $box_shadow;
       .el-date-editor.el-input, .el-date-editor.el-input__inner{
         width: 100%;
       }
@@ -340,6 +327,7 @@ $box_shadow: #d8d5d5;
     .index-article{
       margin-top: 20px;
       background: $background;
+      box-shadow: 1px 0px 10px 0 $box_shadow;
       .title-list{
         padding:  5px  20px;
         height: 30px;
@@ -348,6 +336,7 @@ $box_shadow: #d8d5d5;
           background: $back_Color;
         }
         .title{
+          border-bottom: 1px solid #eee;
           @include ellipsis;
           cursor: pointer;
         }

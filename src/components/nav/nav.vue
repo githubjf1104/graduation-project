@@ -11,6 +11,9 @@
                 <div class="nav-item">
                     <router-link to="/category">专栏</router-link>
                 </div>
+                <div class="nav-item">
+                    <router-link to="/question">提问</router-link>
+                </div>
             </div>
         </div>
         <div class="nav-middle">

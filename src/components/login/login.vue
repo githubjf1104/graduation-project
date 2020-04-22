@@ -33,6 +33,7 @@
 </template>
 <script>
 import { login } from '@/api/index'
+import { mapMutations } from 'vuex'
 
 export default {
   name: 'Login',
@@ -74,7 +75,9 @@ export default {
       }
     }
   },
+  computed: {},
   methods: {
+    ...mapMutations(['saveUsername']),
     // 登录关闭按钮
     handleLoginClose () {
       // this.$router.back()
@@ -96,6 +99,7 @@ export default {
               localStorage.setItem('token', res.data.data)
               localStorage.setItem('username', this.loginRuleForm.username)
               this.Bus.$emit('username', this.loginRuleForm.username)
+              this.saveUsername(this.loginRuleForm.username)
               this.$router.push('/index')
             } else {
               this.$message({

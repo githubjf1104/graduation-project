@@ -99,11 +99,18 @@ export default {
       },
       {
         label: '考研',
-        value: 6
+        value: '考研'
       }]
     }
   },
   created () {
+    let data = this.$route.params.changeArticle
+    if (data) {
+      this.title = data.articleTitle
+      this.articleType = data.articleType
+      this.tagsList = data.articleTags
+      this.content = data.articleContent
+    }
   },
   methods: {
     // 所有操作都会被解析重新渲染
@@ -141,6 +148,7 @@ export default {
     },
     quit () {
       this.$router.back()
+      // this.$router.push('/index')
     },
     // 发表文章
     handlePublish () {

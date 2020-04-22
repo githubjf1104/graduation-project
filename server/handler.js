@@ -200,7 +200,7 @@ module.exports = {
         MongoClient.connect(url, config, async (err, db) => {
             if (err) throw err
             const dbo = db.db('blog')
-            const token = req.get('Authorization')
+            const token = req.get('userToken')
             // 验证 token
             const vaild = await isVaildToken(dbo, token)
             const query = { _id: ObjectID(req.body.id) }
@@ -221,7 +221,7 @@ module.exports = {
                         msg: '删除失败'
                     })
                 } else {
-                    updateTagsData()
+                    // updateTagsData()
                     getAllArticlesNum()
                     res.send({
                         code: 0,

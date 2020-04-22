@@ -1,26 +1,24 @@
 <template>
     <div class="common-view">
         <ul>
-          <li class="common-view-list" v-for="(article, index) in articlelist" :key="index">
+          <li class="common-view-list" v-for="(article, index) in categoryarticle" :key="index">
             <div class="common-view-box">
-              <div class="headportrait">
-                <img :src="article.headportrait" alt="用户头像" width="45" height="45">
-              </div>
-              <div class="common-view-content">
-                <div class="common-view-title">
-                  <h2 :title="article.textTitle">{{article.textTitle}}</h2>
+              <div class="common-view-content" @click="getCurrentArticleContent(article._id)">
+                <div class="common-view-title" >
+                  <h2 :title="article.articleTitle">{{article.articleTitle}}</h2>
                 </div>
+                <div class="common-content" @click="getCurrentArticleContent(article._id)">{{article.articleContent | handleContentHTML}}</div>
                 <div class="common-view-detail">
-                  <div class="username">{{article.username}}</div>
-                  <span class="common-view-tag" v-for="(tag, index) in article.tag" :key="index">{{tag}}</span>
+                  <div class="username">{{article.userName}}</div>
+                  <span class="common-view-tag" v-for="(tag, index) in article.articleTags" :key="index">{{tag}}</span>
                 </div>
               </div>
               <div class="common-view-info">
-                <div class="posttime">{{article.posttime | timeFormat}}</div>
+                <div class="posttime">{{article.date | timeFormat}}</div>
               </div>
             </div>
             <div class="common-view-action">
-              <v-action :likecount="article.likeCount" :index="index"></v-action>
+              <v-action :likenum="article.likeNum" :index="index" ></v-action>
             </div>
          </li>
        </ul>
@@ -28,10 +26,11 @@
 </template>
 <script>
 import vAction from '@/components/common/Action.vue'
+import { fetchArticleContentById } from '@/api/index'
 export default {
   name: 'CommonView',
   props: {
-    articlelist: Array
+    categoryarticle: Array
   },
   components: {
     vAction
@@ -40,22 +39,23 @@ export default {
     return {
     }
   },
-  filters: {
-    timeFormat (time) {
-      let date = new Date(time)
-      let year = date.getFullYear()
-      let month = date.getMonth() + 1
-      let day = date.getDate()
-      function timeWithZero (num) {
-        return num > 10 ? num : '0' + num
-      }
-      return timeWithZero(year) + '-' + timeWithZero(month) + '-' + timeWithZero(day)
+  filters: {},
+  methods: {
+    // 获取选择文章内容
+    getCurrentArticleContent (id) {
+      fetchArticleContentById(id).then(res => {
+        if (res.data.code === 0 && res.status === 200) {
+          this.$router.push({name: 'Detail', params: {articleData: res.data.data}})
+        }
+      }).catch(() => {
+        this.$message.info('获取文章内容失败')
+      })
     }
   }
 }
 </script>
 <style lang='scss' scoped>
-@import '../../../assets/scss/mixin.scss';
+@import '../../assets/scss/mixin.scss';
 $background: #fff;
 $back_Color:#f5f5f5;
 $title_Color: #3a8b96;
@@ -67,16 +67,9 @@ $box_shadow: #eee;
     @include flex-col;
     .common-view-box{
       @include flex-row;
-      padding: 20px;
+      padding: 15px;
       border-bottom: 1px solid $back_Color;
       font-size: 0;
-      .headportrait{
-        width: 45px;
-        margin-right: 20px;
-        img{
-          border-radius: 50%;
-        }
-      }
       .common-view-content{
         @include flex-col;
         flex: 1;
@@ -94,23 +87,31 @@ $box_shadow: #eee;
             @include ellipsis;
           }
         }
-      }
-      .common-view-detail{
-        @include flex-row;
-        margin-top: 14px;
-        font-size: 13px;
-        color: $font_Color;
-        .username{
-          min-width: 50px;
-          margin-right: 20px;
+        .common-content{
+          margin-top: 10px;
+          line-height: 20px;
+          font-size: 12px;
+          color: rgb(117, 111, 111);
           cursor: pointer;
-          &:hover{
-            color: $username_Color;
-          }
+          @include ellipsis
         }
-        .common-view-tag{
-          min-width: 25px;
-          padding: 0 5px;
+        .common-view-detail{
+          @include flex-row;
+          margin-top: 10px;
+          font-size: 13px;
+          color: $font_Color;
+          .username{
+            min-width: 50px;
+            margin-right: 20px;
+            cursor: pointer;
+            &:hover{
+              color: $username_Color;
+            }
+          }
+          .common-view-tag{
+            min-width: 25px;
+            padding: 0 5px;
+          }
         }
       }
       .common-view-info{

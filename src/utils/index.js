@@ -1,4 +1,3 @@
-
 function timestampToDate (timestamp = 0) {
   if (/\s/.test(timestamp)) {
     return timestamp
@@ -7,7 +6,7 @@ function timestampToDate (timestamp = 0) {
   let date = new Date(timestamp)
   return date.toLocaleDateString().replace(/\//g, '-') + ' ' + date.toTimeString().split(' ')[0]
 }
-
+// 请求路径拼接
 function objToUrlParam (obj = {}) {
   let param = ''
   for (let key in obj) {

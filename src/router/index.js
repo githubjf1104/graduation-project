@@ -32,8 +32,13 @@ export default new Router({
       children: [{
         path: 'commonView',
         name: 'CommonView',
-        component: () => import('@/components/category/component/CommonView.vue')
+        component: () => import('@/components/common/CommonView.vue')
       }]
+    },
+    {
+      path: '/question',
+      name: 'Question',
+      component: () => import('@/components/questions/AskQuestion.vue')
     },
     {
       path: '/edit',
@@ -41,7 +46,7 @@ export default new Router({
       component: () => import('@/components/edit/Edit.vue')
     },
     {
-      path: '/personal',
+      path: '/personal/',
       name: 'Personal',
       component: () => import('@/components/personal/Personal.vue'),
       beforeEnter (to, from, next) {
@@ -52,19 +57,14 @@ export default new Router({
         }
       },
       children: [{
-        path: 'askQuestion',
-        name: 'AskQuestion',
-        component: () => import('@/components/personal/components/AskQuestion.vue')
-      },
-      {
         path: 'personArticle',
         name: 'PersonArticle',
-        component: () => import('@/components/personal/components/PersonArticle.vue')
+        component: () => import('@/components/personal/component/PersonArticle.vue')
       },
       {
-        path: 'replay',
-        name: 'Replay',
-        component: () => import('@/components/personal/components/Reply.vue')
+        path: 'waitReply',
+        name: 'WaitReply',
+        component: () => import('@/components/personal/component/WaitReply.vue')
       }]
     },
     {

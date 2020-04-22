@@ -46,15 +46,7 @@ export default {
       articleData: {}
     }
   },
-  filters: {
-    timeFormat (time) {
-      let date = new Date(time)
-      let year = date.getFullYear()
-      let month = date.getMonth() + 1
-      let day = date.getDate()
-      return year + '年' + month + '月' + day + '日'
-    }
-  }
+  filters: {}
 }
 </script>
 <style lang='scss' scoped>
@@ -64,9 +56,10 @@ export default {
   @include flex-col;
   max-width: 960px;
   min-height: 540px;
-  background: #fff;
+  background: rgb(251, 251, 251);
   margin: 0 auto;
   margin-top: 20px;
+  box-shadow: 0 0 10px 0 #d8d5d5;
   .title{
     padding: 20px 25px;
     line-height: 30px;
@@ -98,11 +91,10 @@ export default {
     .markdown-body{
       z-index: 0;
     }
-    .markdown-body *{
-      background: #fff!important;;
-    }
-    .v-note-wrapper
-      .shadow {
+    // .markdown-body * {
+    //   background: #fff!important;
+    // }
+    .v-note-wrapper.shadow {
         box-shadow: none!important;
       }
     }

@@ -1,7 +1,7 @@
 <template>
   <div id="app">
      <div class="index-nav">
-        <v-nav @handlesearch="handleSearch"/>
+        <v-nav/>
       </div>
       <div class="index-main">
         <transition name="fade">
@@ -18,25 +18,6 @@ export default {
   name: 'App',
   components: {
     vNav
-  },
-  data () {
-    return {
-      articleList: [],
-      searchlist: []
-    }
-  },
-  computed: {
-  },
-  created () {},
-  mounted () {
-  },
-  methods: {
-    // 处理搜索功能
-    handleSearch (tag) {
-      this.searchlist = this.articleList.filter(article => {
-        return article.tag.indexOf(tag) !== -1
-      })
-    }
   }
 }
 </script>

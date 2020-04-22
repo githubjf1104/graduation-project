@@ -18,6 +18,13 @@ import 'element-ui/lib/theme-chalk/index.css'
 // 解决移动端300毫秒点击延迟问题
 import fastClick from 'fastclick'
 
+// 过滤器
+import filters from './filters/filters.js'
+
+for (let key in filters) {
+  Vue.filter(key, filters[key])
+}
+
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios
 Vue.prototype.Bus = new Vue()
