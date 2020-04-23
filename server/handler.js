@@ -6,6 +6,7 @@ const url = 'mongodb://localhost:27017/'
 const config = { useUnifiedTopology: true }
 // 保存文章数据的集合/表
 const articleCollection = 'articles'
+const questionCollection = 'questions'
 let tagsCacheData = []
 let tagsArticlesCacheData = {}
 let totalCacheArticles = 0
@@ -152,7 +153,7 @@ module.exports = {
                 collection.find(queryObj).skip(size * (index - 1)).limit(size).toArray((err, result) => {
                     if (err) {
                         res.send({
-                            code: 0,
+                            code: 1,
                             msg: '查找失败',
                             data: []
                         })
@@ -196,6 +197,7 @@ module.exports = {
         })
       })
     },
+    //删除文章
     deleteArticle(req, res) {
         MongoClient.connect(url, config, async (err, db) => {
             if (err) throw err
@@ -233,7 +235,145 @@ module.exports = {
             })
         })
     },
+    // 发表提问
+    publishedProblem (req, res) {
+        MongoClient.connect(url, config, async (err, db) => {
+            if (err) throw err
+            const dbo = db.db('blog')
+            const token = req.get('userToken')
+            // 验证 token
+            const vaild = await isVaildToken(dbo, token)
+            const collection = dbo.collection(questionCollection)
+            if (!vaild) {
+                res.send({
+                    code: 1,
+                    msg: 'token 失效，请重新登陆'
+                })
 
+                db.close()
+                return
+            }
+
+            if (req.body.id) {
+                const query = { _id: ObjectID(req.body.id) }
+                const body = req.body
+                const updateContent = {
+                    $set: { 
+                        questionTitle: body.questionTitle,
+                        questionContent: body.questionContent,
+                        username: body.userName
+                    }
+                }
+
+                collection.updateOne(query, updateContent, err => {
+                    if (err) {
+                        res.send({
+                            code: 1,
+                            msg: '更新失败'
+                        })
+                    } else {
+                        res.send({
+                            code: 0,
+                            data: '更新成功'
+                        })
+                    }
+                    db.close()
+                })
+            } else {
+                const date = (new Date()).getTime()
+                const questionData = {
+                    ...req.body,
+                    date: date,
+                    reply: [],
+                }
+                
+                collection.insertOne(questionData, err => {
+                    if (err) {
+                        res.send({
+                            code: 1,
+                            msg: '发布失败'
+                        })
+                    } else {
+                        res.send({
+                            code: 0,
+                            data: '发布成功'
+                        })
+                    }
+                    db.close()
+                })
+            }
+        })
+    },
+    // 查询问题
+    fetchAllProblem (req, res) {
+        MongoClient.connect(url, config, (err, db) => {
+            if (err) throw err
+            const dbo = db.db('blog')
+            const query = req.query
+            const queryObj = {}
+            const collection = dbo.collection(questionCollection)
+           
+            if (query.username) {
+                queryObj.username = query.username
+            } 
+            collection.find(queryObj).count((err, num) => {
+                if (err) throw err
+                collection.find(queryObj).toArray((err, result) => {
+                    if (err) {
+                        res.send({
+                            code: 1,
+                            msg: '查找失败',
+                            data: []
+                        })
+                    } else {
+                        res.send({
+                            code: 0,
+                            data: result,
+                            total: num,
+                        })
+                    }
+                    
+                    db.close()
+                })
+            })
+        })
+    },
+    // 删除问题
+    deleteProblem(req, res) {
+        MongoClient.connect(url, config, async (err, db) => {
+            if (err) throw err
+            const dbo = db.db('blog')
+            const token = req.get('userToken')
+            // 验证 token
+            const vaild = await isVaildToken(dbo, token)
+            const query = { _id: ObjectID(req.body.id) }
+            if (!vaild) {
+                res.send({
+                    code: 1,
+                    msg: 'token 失效，请重新登陆'
+                })
+
+                db.close()
+                return
+            }
+
+            dbo.collection(questionCollection).deleteOne(query, err => {
+                if (err) {
+                    res.send({
+                        code: 1,
+                        msg: '删除失败'
+                    })
+                } else {
+                    res.send({
+                        code: 0,
+                        msg: '删除成功'
+                    })
+                }
+                
+                db.close()
+            })
+        })
+    },
     fetchTagsData(req, res) {
         if (tagsCacheData.length && !isTagsChange) {
             res.send({

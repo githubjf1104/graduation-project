@@ -24,6 +24,18 @@ export function pushArticle (obj) {
   return axios.post('/api/pushArticle', obj)
 }
 
+export function publishedProblem (obj) {
+  return axios.post('/api/publishedProblem', obj)
+}
+
+export function fetchAllProblem (obj) {
+  return axios.get('/api/fetchAllProblem' + objToUrlParam(obj))
+}
+
+export function deleteProblem (obj) {
+  return axios.post('/api/deleteProblem', obj)
+}
+
 export function deleteArticle (obj) {
   return axios.post('/api/deleteArticle', obj)
 }

@@ -37,6 +37,18 @@ module.exports = {
             handler.fetchArticleContentById(req, res)
         })
 
+        app.post('/publishedProblem', (req, res) => {
+            handler.publishedProblem(req, res)
+        })
+
+        app.get('/fetchAllProblem', (req, res) => {
+            handler.fetchAllProblem(req, res)
+        })
+
+        app.post('/deleteProblem', (req, res) => {
+            handler.deleteProblem(req, res)
+        })
+        
         app.get('/fetchTagsData', (req, res) => {
             handler.fetchTagsData(req, res)
         })

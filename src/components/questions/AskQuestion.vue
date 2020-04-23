@@ -15,17 +15,18 @@
               style="min-height: 560px"/>
           </div>
           <div class="btn">
-            <button>发表问题</button>
+            <button @click="handlePublishProblem">发表问题</button>
           </div>
         </div>
       </div>
       <div class="question-info">
-        <wait-reply></wait-reply>
+        <wait-reply :problemdata="problemData"></wait-reply>
       </div>
     </div>
 </template>
 <script>
-import WaitReply from '@/components/personal/component/WaitReply.vue'
+import WaitReply from '@/components/common/WaitReply.vue'
+import { publishedProblem, fetchAllProblem } from '@/api/index'
 
 export default {
   name: 'AskQuestion',
@@ -36,15 +37,55 @@ export default {
     return {
       questionTitle: '',
       qustionContent: '',
-      html: ''
+      html: '',
+      problemData: []
     }
+  },
+  created () {
+  },
+  mounted () {
+    this.getProblemData()
   },
   methods: {
     // 所有操作都会被解析重新渲染
     change (value, render) {
       // render 为 markdown 解析后的结果[html]
       this.html = render
-      // console.log(render)
+    },
+    // 发表问题
+    handlePublishProblem () {
+      let username = localStorage.getItem('username')
+      let questionObj = {
+        questionTitle: this.questionTitle,
+        questionContent: this.html,
+        username: username
+      }
+      publishedProblem(questionObj).then(res => {
+        if (res.data.code === 0 && res.status === 200) {
+          this.$message.success('发表成功')
+          this.questionTitle = ''
+          this.qustionContent = ''
+          this.getProblemData()
+        } else {
+          this.$message.error('发表失败')
+        }
+      }).catch(err => {
+        console.log(err)
+        this.$message.error('发表失败')
+      })
+    },
+    // 获取问题列表
+    getProblemData () {
+      fetchAllProblem().then(res => {
+        if (res.data.code === 0 && res.status === 200) {
+          this.problemData = res.data.data
+        } else {
+          this.$message.error('查找失败')
+        }
+      }).catch(err => {
+        console.log(err)
+        this.$message.error('查找失败')
+      })
     }
   }
 }
@@ -57,7 +98,7 @@ export default {
   @include flex-col;
   max-width: 960px;
   margin: 0 auto;
-  padding: 24 0 px;
+  padding: 24px 0;
   margin-top: 20px;
   .ask-questions{
     @include flex-col;

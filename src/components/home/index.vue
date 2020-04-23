@@ -175,7 +175,7 @@ $box_shadow: #d8d5d5;
       max-height: 800px;
       .article-list{
         @include flex-row;
-        padding: 18px 24px;
+        padding: 15px 24px;
         border-bottom: 1px solid $back_Color;
         font-size: 0;
         .article-content{
@@ -192,11 +192,12 @@ $box_shadow: #d8d5d5;
               color: $username_Color;
             }
             h2{
+              font-size: 18px;
               @include ellipsis;
             }
           }
           .content-detail{
-            font-size: 12px;
+            font-size: 14px;
             margin: 10px 20px 0 0;
             color: rgb(117, 111, 111);
             cursor: pointer;
@@ -224,6 +225,7 @@ $box_shadow: #d8d5d5;
         .article-info{
           color: $font_Color;
           min-width: 60px;
+          margin-top: 20px;
           .posttime{
             height: 20px;
             line-height: 20px;

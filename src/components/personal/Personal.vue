@@ -18,7 +18,10 @@
                  </router-link>
             </div>
             <div class="content-item">
-              <router-view :username="username"/>
+              <router-view :username="username"
+                           :problemdata="problemList"
+                           :showcontent="showContent"
+                           @delproblem="getPersonalProblem"/>
             </div>
         </div>
       </div>
@@ -28,11 +31,13 @@
     </div>
 </template>
 <script>
+import { fetchAllProblem } from '@/api/index'
 
 export default {
   name: 'personal',
   data () {
     return {
+      problemList: [],
       username: '',
       itemChild: 0,
       listInfo: [{
@@ -44,7 +49,8 @@ export default {
         label: '等待答复',
         value: 2,
         path: '/personal/waitReply'
-      }]
+      }],
+      showContent: false
     }
   },
   created () {
@@ -55,6 +61,11 @@ export default {
     } else {
       this.username = localStorage.getItem('username')
     }
+    this.getPersonalProblem()
+    this.showContent = true
+  },
+  beforeDestroy () {
+    this.showContent = false
   },
   computed: {},
   methods: {
@@ -67,6 +78,20 @@ export default {
       } else {
         return {}
       }
+    },
+    getPersonalProblem () {
+      fetchAllProblem({
+        username: this.username
+      }).then(res => {
+        if (res.data.code === 0 && res.status === 200) {
+          this.problemList = res.data.data
+        } else {
+          this.$message.success('获取数据失败')
+        }
+      }).catch(err => {
+        console.log(err)
+        this.$message.success('获取数据失败')
+      })
     }
   }
 }
@@ -102,7 +127,7 @@ export default {
     .personal-content{
       flex: 1;
       @include flex-col;
-      min-height: 400px;
+      min-height: 370px;
       width: 100%;
       margin-top: 20px;
       background: #fff;
@@ -138,7 +163,7 @@ export default {
     .right-content{
       position: fixed;
       min-height: 400px;
-      width: 100%;
+      width: 200px;
       background: #fff;
     }
   }

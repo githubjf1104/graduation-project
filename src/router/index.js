@@ -12,7 +12,13 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/index'
+      beforeEnter (to, from, next) {
+        if (to.path === '/') {
+          next('/index')
+        } else {
+          next()
+        }
+      }
     },
     {
       path: '/index',
@@ -41,14 +47,20 @@ export default new Router({
       component: () => import('@/components/questions/AskQuestion.vue')
     },
     {
+      path: '/questionDetail',
+      name: 'QuestionDetail',
+      component: () => import('@/components/details/QuestionDetail.vue')
+    },
+    {
       path: '/edit',
       name: 'Eidt',
       component: () => import('@/components/edit/Edit.vue')
     },
     {
-      path: '/personal/',
+      path: '/personal',
       name: 'Personal',
       component: () => import('@/components/personal/Personal.vue'),
+      meta: { toPersonal: false },
       beforeEnter (to, from, next) {
         if (to.name === 'Personal') {
           next({name: 'PersonArticle'})
@@ -64,7 +76,7 @@ export default new Router({
       {
         path: 'waitReply',
         name: 'WaitReply',
-        component: () => import('@/components/personal/component/WaitReply.vue')
+        component: () => import('@/components/common/WaitReply.vue')
       }]
     },
     {

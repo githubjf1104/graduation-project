@@ -14,7 +14,7 @@
               <div class="detail">{{item.articleContent | handleContentHTML}}</div>
             </div>
           </div>
-          <div class="person-opration" v-if="username==currentUser">
+          <div class="person-operation" v-if="username==currentUser">
             <span class="del" @click="handleDelArticle(item._id)">删除</span>
             <span class="fix" @click="handleChangeArticle(item._id)">修改</span>
           </div>
@@ -69,9 +69,17 @@ export default {
       deleteArticle({
         id: id
       }).then(res => {
-        if (res.data.code === 0) {
-          this.getPersonalArticle()
-          this.$message.success('删除成功')
+        if (res.data.code === 0 && res.status === 200) {
+          this.$confirm('是否确定删除此问题?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.getPersonalArticle()
+            this.$message.success('删除成功')
+          })
+        } else {
+          this.$message.error('删除失败')
         }
       })
     },
@@ -152,7 +160,7 @@ export default {
         }
       }
     }
-    .person-opration{
+    .person-operation{
       @include flex-row;
       justify-content: flex-end;
       align-items: flex-end;

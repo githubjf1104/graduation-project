@@ -118,11 +118,6 @@ export default {
   },
   created () {
     this.getCategoryArticles()
-    // this.Bus.$on('handlesearch', tag => {
-    //   this.tag = tag
-    //   this.currentPage = 1
-    //   this.getCategoryArticles()
-    // })
     this.username = localStorage.getItem('username')
   },
   mounted () {
@@ -235,7 +230,7 @@ $box_shadow: #eee;
           }
           .item-list{
             font-size: 14px;
-            display: none;
+            // display: none;
             .item-info{
               line-height: 30px;
               &:hover{
@@ -243,11 +238,11 @@ $box_shadow: #eee;
               }
             }
           }
-          &:hover{
-            .item-list{
-              display: block;
-            }
-          }
+          // &:hover{
+          //   .item-list{
+          //     display: block;
+          //   }
+          // }
         }
         .item-line{
           margin: 10px 20px;
