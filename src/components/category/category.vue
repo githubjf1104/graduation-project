@@ -199,7 +199,6 @@ $box_shadow: #eee;
     box-sizing: border-box;
     .slider-nav{
       position: fixed;
-      height: 430px;
       width: 100px;
       padding: 10px 10px;
       text-align: center;
@@ -260,8 +259,7 @@ $box_shadow: #eee;
     border: 1px solid $box_shadow;
     box-shadow: 4px -4px 2px $box_shadow;
     .common-view{
-      min-height: 540px;
-      max-height: 800px;
+      min-height: 490px;
       padding: 0 20px;
     }
     .pagenation{
@@ -273,7 +271,6 @@ $box_shadow: #eee;
   .category-right{
     flex: 0 0 248px;
     width: 248px;
-    height: 570px;
     margin-left: 15px;
     border-radius: 2px;
     .person-info{

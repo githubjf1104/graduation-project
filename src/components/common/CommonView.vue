@@ -26,11 +26,14 @@
             </div>
          </li>
        </ul>
-       <div class="empty" v-if="categoryarticle.length===0">暂无数据</div>
+       <div class="no-data">
+         <no-data :datalength="categoryarticle.length"></no-data>
+       </div>
     </div>
 </template>
 <script>
 import vAction from '@/components/common/Action.vue'
+import noData from '@/components/common/noData.vue'
 import { fetchArticleContentById } from '@/api/index'
 export default {
   name: 'CommonView',
@@ -38,7 +41,8 @@ export default {
     categoryarticle: Array
   },
   components: {
-    vAction
+    vAction,
+    noData
   },
   data () {
     return {
@@ -68,6 +72,7 @@ $username_Color: #2d5856;
 $font_Color: #b1a9a9;
 $box_shadow: #eee;
 .common-view{
+  position: relative;
   .common-view-list{
     @include flex-col;
     .common-view-box{
@@ -145,12 +150,10 @@ $box_shadow: #eee;
       }
     }
   }
-  .empty{
-    height: 35px;
-    line-height: 35px;
-    font-size: 16px;
-    text-align: center;
-    border-bottom: 1px solid #eee;
+  .no-data{
+    position: absolute;
+    width: 100%;
+    top: 0;
   }
 }
 </style>

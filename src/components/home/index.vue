@@ -22,6 +22,9 @@
             </div>
          </li>
        </ul>
+       <div class="no-data">
+         <no-data :datalength="articleList.length"></no-data>
+       </div>
        <div class="paganation">
           <el-pagination
             @size-change="handleSizeChange"
@@ -67,12 +70,14 @@
 </template>
 <script>
 import { fetchAllArticles, fetchArticleContentById } from '@/api/index'
+import noData from '@/components/common/noData.vue'
 
 export default {
   name: 'Index',
   props: {
   },
   components: {
+    noData
   },
   data () {
     return {
@@ -171,7 +176,7 @@ $box_shadow: #d8d5d5;
     min-height: 540px;
     box-shadow: 0px 0px 10px 0px $box_shadow;
     .list-ul{
-      min-height: 540px;
+      min-height: 510px;
       max-height: 800px;
       .article-list{
         @include flex-row;
@@ -252,6 +257,11 @@ $box_shadow: #d8d5d5;
           }
         }
       }
+    }
+    .no-data{
+      position: absolute;
+      width: 100%;
+      top: 0;
     }
     .paganation{
       @include flex-row;
