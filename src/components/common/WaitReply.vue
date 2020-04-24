@@ -15,7 +15,7 @@
               <div class="operation" v-show="showcontent && showEmpty">
                 <span @click="handleDelQustion(item._id)">删除</span>
               </div>
-              <div class="rely-num">{{item.reply.length}}个回答</div>
+              <!-- <div class="rely-num">{{replyNum}}个回答</div> -->
             </div>
         </li>
       </ul>
@@ -23,7 +23,7 @@
 </template>
 <script>
 import vBox from '@/components/common/Box.vue'
-import { deleteProblem } from '@/api/index'
+import { deleteProblem, fetchProblemContentById } from '@/api/index'
 export default {
   name: 'PersonQuestion',
   components: {
@@ -45,7 +45,8 @@ export default {
   },
   data () {
     return {
-      showEmpty: true
+      showEmpty: true,
+      replyNum: 0
     }
   },
   methods: {
@@ -76,7 +77,16 @@ export default {
       })
     },
     handleToQuestionDetail (id) {
-      this.$router.push({name: 'QuestionDetail'})
+      fetchProblemContentById(id).then(res => {
+        if (res.data.code === 0 && res.status === 200) {
+          this.$router.push({name: 'QuestionDetail', params: {questionDetailData: res.data.data}})
+        } else {
+          this.$message.error('获取失败')
+        }
+      }).catch(err => {
+        console.log(err)
+        this.$message.error('获取失败')
+      })
     }
   }
 }

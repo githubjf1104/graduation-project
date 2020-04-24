@@ -28,6 +28,14 @@ export function publishedProblem (obj) {
   return axios.post('/api/publishedProblem', obj)
 }
 
+export function publishedReply (obj) {
+  return axios.post('/api/publishedReply', obj)
+}
+
+export function fetchAllReply (id) {
+  return axios.get(`/api/fetchAllReply?id=${id}`)
+}
+
 export function fetchAllProblem (obj) {
   return axios.get('/api/fetchAllProblem' + objToUrlParam(obj))
 }
@@ -38,6 +46,14 @@ export function deleteProblem (obj) {
 
 export function deleteArticle (obj) {
   return axios.post('/api/deleteArticle', obj)
+}
+
+export function fetchProblemContentById (id) {
+  return axios.get(`/api/fetchProblemContentById?id=${id}`)
+}
+
+export function giveLike (obj) {
+  return axios.post('/api/giveLike', obj)
 }
 
 export function fetchTagsData () {

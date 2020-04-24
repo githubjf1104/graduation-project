@@ -27,8 +27,10 @@ const filters = {
   },
 
   handleContentHTML (content) {
-    let reg = /<[^>]+>/g
-    return content.replace(reg, '')
+    if (content !== null) {
+      return content.replace(/<[^>]+>/g, '')
+    }
+    return ''
   }
 }
 export default filters

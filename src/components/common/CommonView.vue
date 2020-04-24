@@ -18,10 +18,15 @@
               </div>
             </div>
             <div class="common-view-action">
-              <v-action :likenum="article.likeNum" :index="index" ></v-action>
+              <v-action
+                  :likenum="article.likeNum"
+                  :articleid="article._id"
+                  :username="article.userName">
+              </v-action>
             </div>
          </li>
        </ul>
+       <div class="empty" v-if="categoryarticle.length===0">暂无数据</div>
     </div>
 </template>
 <script>
@@ -76,7 +81,7 @@ $box_shadow: #eee;
         width: 0;
         .common-view-title{
           width: 80%;
-          font-size: 16px;
+          font-size: 18px;
           font-weight: 600;
           color: $title_Color;
           cursor: pointer;
@@ -90,7 +95,7 @@ $box_shadow: #eee;
         .common-content{
           margin-top: 10px;
           line-height: 20px;
-          font-size: 12px;
+          font-size: 14px;
           color: rgb(117, 111, 111);
           cursor: pointer;
           @include ellipsis
@@ -139,6 +144,13 @@ $box_shadow: #eee;
         }
       }
     }
+  }
+  .empty{
+    height: 35px;
+    line-height: 35px;
+    font-size: 16px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
   }
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
     <div class="action-box">
         <div class="action-like" @click="addLikeCount">
-            <span class="iconfont">&#xe60c;</span>
+            <span class="iconfont" :class="{'like': liked}">&#xe60c;</span>
             <span class="count">{{count}}</span>
         </div>
         <div class="action-comment">
@@ -11,35 +11,54 @@
     </div>
 </template>
 <script>
+import { giveLike } from '@/api/index'
+
 export default {
   name: 'Action',
   props: {
-    likenum: {
-      type: Number,
-      default: 0
+    likes: {
+      type: Array
     },
-    index: {
-      type: Number
+    articleid: {
+      type: String
+    },
+    username: {
+      type: String
     }
   },
   data () {
     return {
       count: 0,
-      liked: false
+      liked: false,
+      name: ''
     }
   },
   created () {
-    this.count = this.likenum
+    this.count = this.likes
+    this.name = localStorage.getItem('username')
   },
   methods: {
     addLikeCount () {
       if (!this.liked) {
-        this.count++
-        // this.Bus.$emit('handlelike', this.count)
+        this.count.push(this.name)
       } else {
-        this.count--
+        if (this.count.length > 0) {
+          this.count.pop(this.name)
+        } else {
+          this.count = []
+        }
       }
       this.liked = !this.liked
+      this.handleGiveLike()
+    },
+    handleGiveLike () {
+      let likeObj = {
+        id: this.articleid,
+        username: localStorage.getItem('username'),
+        liked: this.liked
+      }
+      giveLike(likeObj).then(res => {
+      })
     }
   }
 }
@@ -68,6 +87,9 @@ export default {
       font-size: 16px;
       &:hover{
         color: #333;
+      }
+      &.like{
+        color: #528aaa;
       }
     }
     .count{

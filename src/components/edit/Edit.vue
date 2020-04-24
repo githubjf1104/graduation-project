@@ -72,6 +72,7 @@ export default {
       inputVisible: false,
       tagValue: '',
       title: '',
+      id: '',
       articleType: '',
       articleTypeList: [{
         label: '软件工程',
@@ -106,6 +107,7 @@ export default {
   created () {
     let data = this.$route.params.changeArticle
     if (data) {
+      this.id = data._id
       this.title = data.articleTitle
       this.articleType = data.articleType
       this.tagsList = data.articleTags
@@ -154,6 +156,7 @@ export default {
     handlePublish () {
       const userName = localStorage.getItem('username')
       const articleObj = {
+        id: this.id,
         articleTitle: this.title,
         articleType: this.articleType,
         articleContent: this.html,

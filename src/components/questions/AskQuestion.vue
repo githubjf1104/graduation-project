@@ -11,8 +11,7 @@
               ref="md"
               :ishljs = "true"
               :subfield = "false"
-              @change="change"
-              style="min-height: 560px"/>
+              @change="change"/>
           </div>
           <div class="btn">
             <button @click="handlePublishProblem">发表问题</button>
