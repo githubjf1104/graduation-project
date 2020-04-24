@@ -119,6 +119,12 @@ export default {
   created () {
     this.getCategoryArticles()
     this.username = localStorage.getItem('username')
+    this.Bus.$on('increaselike', () => {
+      this.getCategoryArticles()
+    })
+    this.Bus.$on('decreaselike', () => {
+      this.getCategoryArticles()
+    })
   },
   mounted () {
   },

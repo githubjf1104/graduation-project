@@ -2,7 +2,7 @@
     <div class="action-box">
         <div class="action-like" @click="addLikeCount">
             <span class="iconfont" :class="{'like': liked}">&#xe60c;</span>
-            <span class="count">{{count}}</span>
+            <span class="count">{{likes.length}}</span>
         </div>
         <div class="action-comment">
             <span class="iconfont">&#xe601;</span>
@@ -28,28 +28,28 @@ export default {
   },
   data () {
     return {
-      count: 0,
       liked: false,
       name: ''
     }
   },
   created () {
-    this.count = this.likes
     this.name = localStorage.getItem('username')
+    if (this.likes.indexOf(this.name) !== -1) {
+      this.liked = true
+    }
   },
   methods: {
     addLikeCount () {
-      if (!this.liked) {
-        this.count.push(this.name)
+      if (!this.liked || this.liked === []) {
+        this.handleGiveLike().then(() => {
+          this.Bus.$emit('increaselike')
+        })
       } else {
-        if (this.count.length > 0) {
-          this.count.pop(this.name)
-        } else {
-          this.count = []
-        }
+        this.handleGiveLike().then(() => {
+          this.Bus.$emit('decreaselike')
+        })
       }
       this.liked = !this.liked
-      this.handleGiveLike()
     },
     handleGiveLike () {
       let likeObj = {
@@ -57,7 +57,7 @@ export default {
         username: localStorage.getItem('username'),
         liked: this.liked
       }
-      giveLike(likeObj).then(res => {
+      return giveLike(likeObj).then(res => {
       })
     }
   }

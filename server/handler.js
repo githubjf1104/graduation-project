@@ -14,7 +14,7 @@ let tagsArticlesCacheData = {}
 let totalReply = 0
 // 标签数据是否改变
 let isTagsChange = true
-
+let  likedContent = {}
 initData()
 
 module.exports = {
@@ -145,8 +145,8 @@ module.exports = {
         let tag = query.articleTags
         queryObj.articleTags = {$elemMatch: {$eq: tag}}
       } else if (query.articleTitle) {
-        let title = query.articleTitle
-        queryObj.articleTitle = /^.*title.*$/
+        let title = query.articleTitles
+        queryObj.articleTitle = {$regex: title, $options: '$i'}
       } else if (query.userName) {
         queryObj.userName = query.userName
       }
@@ -525,21 +525,20 @@ module.exports = {
 
       const query = { _id: ObjectID(req.body.id) }
       const body = req.body
-      const updateContent = {}
       if (body.liked) {
-        updateContent = {
-          $push: {
-            likes: body.username
-          }
-        }
-      } else {
-        updateContent = {
+         likedContent = {
           $pull: {
             likes: body.username
           }
         }
-      }
-      collection.updateOne(query, updateContent, err => {
+      } else {
+        likedContent = {
+          $push: {
+            likes: body.username
+          }
+        }
+      } 
+      collection.updateOne(query, likedContent, err => {
         if (err) {
           res.send({
             code: 1,
@@ -552,7 +551,7 @@ module.exports = {
           })
         }
         db.close()
-      })        
+      })         
     })
   },
   fetchTagsData (req, res) {

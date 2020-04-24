@@ -1,5 +1,5 @@
 <template>
-    <div class="index-container">
+    <div class="index-container" v-loading="loading">
       <div class=index-left>
         <ul class="list-ul">
           <li class="article-list" v-for="(article, index) in articleList" :key="index">
@@ -85,7 +85,8 @@ export default {
       pageSize: 6,
       currentPage: 1,
       total: 0,
-      tag: '',
+      searchContent: '',
+      loading: false,
       pickervalue: new Date()
     }
   },
@@ -100,8 +101,8 @@ export default {
   },
   created () {
     this.getAllArticles()
-    this.Bus.$on('handlesearch', tag => {
-      this.tag = tag
+    this.Bus.$on('handlesearch', content => {
+      this.searchContent = content
       this.currentPage = 1
       this.getAllArticles()
     })
@@ -135,8 +136,9 @@ export default {
     },
     // 查询所有文章
     getAllArticles () {
+      this.loading = true
       fetchAllArticles({
-        articleTags: this.tag,
+        articleTitle: this.searchContent,
         pageSize: this.pageSize,
         currentPage: this.currentPage
       }).then(res => {
@@ -144,7 +146,10 @@ export default {
         if (res.data.code === 0 && res.status === 200) {
           this.articleList = res.data.data
           this.total = res.data.total
+          this.loading = false
         }
+      }).catch(() => {
+        this.loading = false
       })
     },
     // 转到用户个人中心

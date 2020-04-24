@@ -18,8 +18,8 @@
         </div>
         <div class="nav-middle">
            <div class="nav-search">
-                <input type="text" placeholder="请输入标签" v-model="searchTag" @keyup.enter="handleSearch(searchTag)">
-                <span class="iconfont" @click="handleSearch(searchTag)">&#xe672;</span>
+                <input type="text" placeholder="请输入标签" v-model="searchcontent" @keyup.enter="handleSearch(searchcontent)">
+                <span class="iconfont" @click="handleSearch(searchcontent)">&#xe672;</span>
             </div>
             <div class="nav-write" @click="handleEditArticle"><span><i class="iconfont">&#xe61b;</i>发表文章</span></div>
         </div>
@@ -50,7 +50,7 @@ export default {
   },
   data () {
     return {
-      searchTag: '',
+      searchcontent: '',
       showLoginPage: false,
       showRegisterPage: false,
       username: ''
@@ -76,8 +76,8 @@ export default {
     handleDropdown () {
       this.isDropdown = !this.isDropdown
     },
-    handleSearch (tag) {
-      this.Bus.$emit('handlesearch', tag)
+    handleSearch (content) {
+      this.Bus.$emit('handlesearch', content)
     },
     // 登录
     handleLogin () {

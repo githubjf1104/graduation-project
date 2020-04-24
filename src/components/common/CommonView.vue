@@ -19,7 +19,7 @@
             </div>
             <div class="common-view-action">
               <v-action
-                  :likenum="article.likeNum"
+                  :likes="article.likes"
                   :articleid="article._id"
                   :username="article.userName">
               </v-action>
