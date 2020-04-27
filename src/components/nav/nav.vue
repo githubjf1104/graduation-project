@@ -137,8 +137,6 @@ export default {
             message: '退出登录成功'
           })
           this.username = ''
-          // localStorage.removeItem('token')
-          // localStorage.removeItem('username')
           localStorage.clear()
           this.$router.push('/index')
         } else {

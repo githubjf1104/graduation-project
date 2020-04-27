@@ -21,12 +21,28 @@
               <router-view :username="username"
                            :problemdata="problemList"
                            :showcontent="showContent"
-                           @delproblem="getPersonalProblem"/>
+                           @delproblem="getPersonalProblem"
+                           @personArticle="receiveNum"/>
             </div>
         </div>
       </div>
-      <div class="personal-right">
-        <div class="right-content"></div>
+      <div class="category-right">
+        <div class="person-info">
+          <div class="profile">
+            <span class="iconfont">&#xe6bf;</span>
+            <span class="username">{{username}}</span>
+          </div>
+          <div class="user-list">
+            <div class="article">
+              <p>文章</p>
+              <p class="count">{{articleNum}}</p>
+            </div>
+             <div class="focus">
+              <p>关注</p>
+              <p class="count">0</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 </template>
@@ -50,16 +66,17 @@ export default {
         value: 2,
         path: '/personal/waitReply'
       }],
-      showContent: false
+      showContent: false,
+      articleNum: 0
     }
   },
   created () {
-    // debugger
-    let username = this.$route.params.username
-    if (username) {
-      this.username = username
+    let name = this.$route.params.username
+    if (name) {
+      this.username = name
+      localStorage.setItem('name', name)
     } else {
-      this.username = localStorage.getItem('username')
+      this.username = localStorage.getItem('name')
     }
     this.getPersonalProblem()
     this.showContent = true
@@ -68,7 +85,11 @@ export default {
     this.showContent = false
   },
   computed: {},
+  // 个人文章数量
   methods: {
+    receiveNum (num) {
+      this.articleNum = num
+    },
     navLinkItemsClick (value) {
       this.itemChild = value
     },
@@ -157,14 +178,60 @@ export default {
       }
     }
   }
-  .personal-right{
+  .category-right{
+    flex: 0 0 200px;
     width: 200px;
-    margin-left: 20px;
-    .right-content{
-      position: fixed;
-      min-height: 400px;
-      width: 200px;
+    margin-left: 15px;
+    border-radius: 2px;
+    .person-info{
+      @include flex-col;
+      height: 160px;
       background: #fff;
+      .profile{
+        @include flex-row;
+        padding: 10px;
+        height: 80px;
+        font-size: 0px;
+        .iconfont{
+          width: 40px;
+          height: 40px;
+          border: 1px solid #eee;
+          border-radius: 50%;
+          text-align: center;
+          line-height: 40px;
+          box-shadow: 0 2px 4px 0 #eee;
+          font-size: 30px;
+         }
+        .username{
+          display: inline-block;
+          line-height: 40px;
+          margin-left: 10px;
+          flex: 1;
+          font-size: 16px;
+        }
+      }
+      .user-list{
+        @include flex-row;
+        border-top:1px solid #eee;
+        line-height: 20px;
+        padding: 10px;
+        font-size: 16px;
+        .article{
+          flex: 1;
+          text-align: center;
+          border-right: 1px solid #eee;
+          .count{
+            font-weight: bold;
+          }
+        }
+        .focus{
+          flex: 1;
+          text-align: center;
+          .count{
+            font-weight: bold;
+          }
+        }
+      }
     }
   }
 }

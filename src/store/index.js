@@ -4,12 +4,8 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
-    username: ''
   },
   mutations: {
-    saveUsername (state, payload) {
-      state.username = payload
-    }
   },
   actions: {
 

@@ -1,28 +1,78 @@
 <template>
     <div class="panel">
         <div class="btn-like">
-            <span class="iconfont">&#xe60c;</span>
-            <span class="like-count">{{likeNum}}</span>
+            <span class="iconfont" @click="handleLikes" :class="{'like': liked}">&#xe60c;</span>
+            <span class="like-count">{{likes.length}}</span>
         </div>
         <div class="btn-comment">
             <span class="iconfont">&#xe601;</span>
-            <span class="comment-count">{{commentNum}}</span>
+            <span class="comment-count">{{total}}</span>
         </div>
         <div class="btn-collect">
             <span class="iconfont">&#xe600;</span>
-            <span class="collect-count">110</span>
+            <span class="collect-count">0</span>
         </div>
     </div>
 </template>
 <script>
+import { giveLike } from '@/api/index'
+// import action from '@/components/common/Action'
+
 export default {
   name: 'panel',
+  // mixins: [action],
   props: {
-    likeNum: {
-      type: Number
+    likes: {
+      type: Array
     },
     commentNum: {
       type: Number
+    },
+    username: {
+      type: String
+    },
+    articleid: {
+      type: String
+    },
+    total: {
+      type: Number
+    }
+  },
+  computed: {
+  },
+  data () {
+    return {
+      liked: false,
+      name: ''
+    }
+  },
+  created () {
+    this.name = localStorage.getItem('username')
+    if (this.likes.indexOf(this.name) !== -1) {
+      this.liked = true
+    }
+  },
+  methods: {
+    handleLikes () {
+      if (!this.liked || this.likes === []) {
+        this.handleGiveLike().then(() => {
+          this.$emit('addlike', this.name)
+        })
+      } else {
+        this.handleGiveLike().then(() => {
+          this.$emit('reducelike', this.name)
+        })
+      }
+      this.liked = !this.liked
+    },
+    handleGiveLike () {
+      let likeObj = {
+        id: this.articleid,
+        username: localStorage.getItem('username'),
+        liked: this.liked
+      }
+      return giveLike(likeObj).then(res => {
+      })
     }
   }
 }
@@ -50,6 +100,9 @@ $panel_shadow: rgba(0, 0, 0,.04);
       cursor: pointer;
       &:hover{
           color: rgb(90, 90, 90);
+      }
+      &.like{
+        color: #528aaa;
       }
     }
     .like-count, .comment-count, .collect-count{

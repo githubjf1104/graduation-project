@@ -154,14 +154,14 @@ export default {
     },
     // 发表文章
     handlePublish () {
-      const userName = localStorage.getItem('username')
+      const username = localStorage.getItem('username')
       const articleObj = {
         id: this.id,
         articleTitle: this.title,
         articleType: this.articleType,
         articleContent: this.html,
         articleTags: this.tagsList,
-        userName: userName
+        username: username
       }
       pushArticle(articleObj).then(res => {
         if (res.data.code === 0 && res.status === 200) {

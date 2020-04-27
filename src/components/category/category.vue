@@ -46,25 +46,6 @@
           </el-pagination>
         </div>
       </div>
-      <div class="category-right">
-        <div class="person-info">
-          <div class="profile">
-            <span class="iconfont">&#xe6bf;</span>
-            <span class="username">{{username}}</span>
-          </div>
-          <div class="user-list">
-            <div class="article">
-              <p>文章</p>
-              <p class="count">{{categoryArticle.length}}</p>
-            </div>
-             <div class="focus">
-              <p>关注</p>
-              <p class="count">0</p>
-            </div>
-          </div>
-        </div>
-        <div class="category-info"></div>
-      </div>
     </div>
 </template>
 <script>
@@ -180,7 +161,6 @@ export default {
     handlePublic (publicItem) {
       this.sliderPublicIndex = publicItem.value
       this.articleType = publicItem.category
-      console.log(this.articleType)
       this.getCategoryArticles()
     }
   }
@@ -198,15 +178,15 @@ $box_shadow: #eee;
   max-width: 960px;
   margin: 20px auto 0 auto;
   .category-slider{
-    flex: 0 0 120px;
-    width: 120px;
-    margin-right: 15px;
+    flex: 0 0 220px;
+    width: 220px;
+    margin-right: 20px;
     border-radius: 2px;
     box-sizing: border-box;
     .slider-nav{
       position: fixed;
-      width: 100px;
-      padding: 10px 10px;
+      width: 180px;
+      padding: 10px 20px;
       text-align: center;
       box-shadow: 4px -4px 2px $box_shadow;
       background:$background;
@@ -272,62 +252,6 @@ $box_shadow: #eee;
       margin-top: 20px;
       @include flex-row;
       justify-content: flex-end;
-    }
-  }
-  .category-right{
-    flex: 0 0 248px;
-    width: 248px;
-    margin-left: 15px;
-    border-radius: 2px;
-    .person-info{
-      @include flex-col;
-      height: 160px;
-      background: $background;
-      .profile{
-        @include flex-row;
-        padding: 10px;
-        height: 80px;
-        font-size: 0px;
-        .iconfont{
-          width: 40px;
-          height: 40px;
-          border: 1px solid $back_Color;
-          border-radius: 50%;
-          text-align: center;
-          line-height: 40px;
-          box-shadow: 0 2px 4px 0 $box_shadow;
-          font-size: 30px;
-         }
-        .username{
-          display: inline-block;
-          line-height: 40px;
-          margin-left: 10px;
-          flex: 1;
-          font-size: 16px;
-        }
-      }
-      .user-list{
-        @include flex-row;
-        border-top:1px solid $back_Color;
-        line-height: 20px;
-        padding: 10px;
-        font-size: 16px;
-        .article{
-          flex: 1;
-          text-align: center;
-          border-right: 1px solid $back_Color;
-          .count{
-            font-weight: bold;
-          }
-        }
-        .focus{
-          flex: 1;
-          text-align: center;
-          .count{
-            font-weight: bold;
-          }
-        }
-      }
     }
   }
 }

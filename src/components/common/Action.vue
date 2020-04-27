@@ -26,6 +26,7 @@ export default {
       type: String
     }
   },
+  computed: {},
   data () {
     return {
       liked: false,
@@ -40,7 +41,7 @@ export default {
   },
   methods: {
     addLikeCount () {
-      if (!this.liked || this.liked === []) {
+      if (!this.liked || this.likes === []) {
         this.handleGiveLike().then(() => {
           this.Bus.$emit('increaselike')
         })
@@ -68,17 +69,13 @@ export default {
 
 .action-box{
   position: relative;
-  @include flex-row;
   box-sizing: border-box;
   width: 100%;
-  height: 30px;
-  line-height: 30px;
-  border-bottom: 1px solid #ebebeb;
   color: rgb(131, 131, 131);
   .action-like{
-    flex: 1;
+    display: inline-block;
+    width: 100px;
     font-size: 0;
-    border-right: 1px solid #ebebeb;
     text-align: center;
     line-height: 30px;
     cursor: pointer;
@@ -97,7 +94,9 @@ export default {
     }
   }
   .action-comment{
-    flex: 1;
+    display: inline-block;
+    width: 100px;
+    border-left: none;
     font-size: 0;
     text-align: center;
     line-height: 30px;

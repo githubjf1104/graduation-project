@@ -61,9 +61,12 @@ export default {
     this.name = localStorage.getItem('username')
     let data = this.$route.params.questionDetailData
     if (data) {
-      this.questionDetailData = data
-      this.questionId = data._id
+      localStorage.setItem('question', JSON.stringify(data))
+    } else {
+      data = JSON.parse(localStorage.getItem('question'))
     }
+    this.questionDetailData = data
+    this.questionId = data._id
   },
   mounted () {
     this.getReplyData()

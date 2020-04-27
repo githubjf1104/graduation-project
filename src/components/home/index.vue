@@ -4,20 +4,20 @@
         <ul class="list-ul">
           <li class="article-list" v-for="(article, index) in articleList" :key="index">
             <div class="article-content">
-              <div class="article-title" @click="getCurrentArticleContent(article._id)">
+              <div class="article-title" @click="getCurrentArticleContent(article._id, 'title')">
                 <h2 :title="article.articleTitle">{{article.articleTitle}}</h2>
               </div>
-              <div class="content-detail" @click="getCurrentArticleContent(article._id)">{{article.articleContent | handleContentHTML}}</div>
+              <div class="content-detail" @click="getCurrentArticleContent(article._id, 'content')">{{article.articleContent | handleContentHTML}}</div>
               <div class="article-detail">
-                 <div class="username" @click="handleToPersonalDetail(article.userName)">{{article.userName}}</div>
+                 <div class="username" @click="handleToPersonalDetail(article.username)">{{article.username}}</div>
                  <span class="article-tag" v-for="(tag, index) in article.articleTags" :key="index">{{tag}}</span>
               </div>
             </div>
             <div class="article-info">
               <div class="posttime">{{article.date | timeFormat}}</div>
               <div class="info-count">
-                <span class="iconfont">&#xe601;</span>
-                <span class="count">{{article.comments.length}}</span>
+                <span class="iconfont" @click="getCurrentArticleContent(article._id, 'comment')">&#xe601;</span>
+                <span class="count"></span>
               </div>
             </div>
          </li>
@@ -37,26 +37,6 @@
        </div>
       </div>
       <div class="index-right">
-        <div class="index-info">
-            <div class="author-word">
-              <h2>作者</h2>
-            </div>
-            <div class="index-username">
-                <ul>
-                  <li class="author-list" v-for="(author, index) in indexAuthor" :key="index">
-                    <div class="username" @click="handleToPersonalDetail(author.userName)">{{author.userName}}</div>
-                  </li>
-                </ul>
-                <div class="all-list"><span>榜单</span><i class="iconfont">&#xe70c;</i></div>
-            </div>
-        </div>
-        <div class="index-calendar">
-            <el-date-picker
-              v-model="pickervalue"
-              type="datetime"
-              placeholder="选择日期时间">
-            </el-date-picker>
-        </div>
         <div class="index-article" ref="index-article">
           <div class="hotarticle-list"></div>
           <ul>
@@ -64,6 +44,13 @@
               <div class="title" @click="getCurrentArticleContent(item._id)">{{item.articleTitle}}</div>
             </li>
           </ul>
+        </div>
+        <div class="index-calendar">
+            <el-date-picker
+              v-model="pickervalue"
+              type="datetime"
+              placeholder="选择日期时间">
+            </el-date-picker>
         </div>
       </div>
     </div>
@@ -124,11 +111,10 @@ export default {
       this.getAllArticles()
     },
     // 获取选择文章内容
-    getCurrentArticleContent (id) {
+    getCurrentArticleContent (id, str) {
       fetchArticleContentById(id).then(res => {
-        // console.log(res)
         if (res.data.code === 0 && res.status === 200) {
-          this.$router.push({name: 'Detail', params: {articleData: res.data.data}})
+          this.$router.push({name: 'Detail', params: {articleData: res.data.data, str: str}})
         }
       }).catch(() => {
         this.$message.info('获取文章内容失败')
@@ -238,6 +224,7 @@ $box_shadow: #d8d5d5;
           margin-top: 20px;
           .posttime{
             height: 20px;
+            padding-top: 5px;
             line-height: 20px;
             font-size: 13px;
           }
@@ -342,7 +329,6 @@ $box_shadow: #d8d5d5;
       }
     }
     .index-article{
-      margin-top: 20px;
       background: $background;
       box-shadow: 1px 0px 10px 0 $box_shadow;
       .title-list{

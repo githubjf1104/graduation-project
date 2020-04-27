@@ -76,8 +76,16 @@ export function register (data) {
   return axios.post('/api/register', data)
 }
 
-export function addComment (data) {
+export function comment (data) {
   return axios.post('/api/comment', data)
+}
+
+export function commentReply (data) {
+  return axios.post('/api/commentReply', data)
+}
+
+export function fetchComments (id) {
+  return axios.get(`/api/fetchComments?id=${id}`)
 }
 
 export function fetchVisits () {

@@ -46,10 +46,11 @@ export default {
     // 获取文章
     getPersonalArticle () {
       fetchAllArticles({
-        userName: this.username
+        username: this.username
       }).then(res => {
         if (res.data.code === 0 && res.status === 200) {
           this.personArticle = res.data.data
+          this.$emit('personArticle', res.data.total)
         }
       })
     },
@@ -121,6 +122,7 @@ export default {
         line-height: 20px;
         font-weight: bold;
         color: #000;
+        cursor: pointer;
         &:hover{
           color: #3a8b96;
         }
@@ -143,7 +145,6 @@ export default {
           border-radius: 5px;
           border: 1px solid #eee;
           text-align: center;
-          cursor: pointer;
         }
       }
       .article-content{

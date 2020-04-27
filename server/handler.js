@@ -1,5 +1,4 @@
 const { generateToken, isVaildToken } = require('./token')
-const { getClientIp } = require('./utils')
 const MongoClient = require('mongodb').MongoClient
 const ObjectID = require('mongodb').ObjectID
 const url = 'mongodb://localhost:27017/'
@@ -8,13 +7,14 @@ const config = { useUnifiedTopology: true }
 const articleCollection = 'articles'
 const questionCollection = 'questions'
 const replyCollection = 'replys'
+const commentCollection = 'comments'
 
 let tagsCacheData = []
 let tagsArticlesCacheData = {}
 let totalReply = 0
 // 标签数据是否改变
 let isTagsChange = true
-let  likedContent = {}
+let likedContent = {}
 initData()
 
 module.exports = {
@@ -77,7 +77,7 @@ module.exports = {
             articleType: body.articleType,
             articleContent: body.articleContent,
             articleTags: body.articleTags,
-            userName: body.userName
+            username: body.username
           }
         }
 
@@ -103,7 +103,6 @@ module.exports = {
         const articleData = {
           ...req.body,
           date: date,
-          comments: [],
           likes: []
         }
 
@@ -115,8 +114,6 @@ module.exports = {
             })
           } else {
             updateTagsData()
-            // getAllArticlesNum()
-            // isTagsChange = true
             res.send({
               code: 0,
               data: '发布成功'
@@ -145,10 +142,10 @@ module.exports = {
         let tag = query.articleTags
         queryObj.articleTags = {$elemMatch: {$eq: tag}}
       } else if (query.articleTitle) {
-        let title = query.articleTitles
+        let title = query.articleTitle
         queryObj.articleTitle = {$regex: title, $options: '$i'}
-      } else if (query.userName) {
-        queryObj.userName = query.userName
+      } else if (query.username) {
+        queryObj.username = query.username
       }
       collection.find(queryObj).count((err, num) => {
         if (err) throw err
@@ -186,8 +183,6 @@ module.exports = {
             msg: '获取失败'
           })
         } else {
-          // updateTagsData()
-          // getAllArticlesNum()
           res.send({
             code: 0,
             data: result,
@@ -225,8 +220,6 @@ module.exports = {
             msg: '删除失败'
           })
         } else {
-          // updateTagsData()
-        //   getAllArticlesNum()
           res.send({
             code: 0,
             msg: '删除成功'
@@ -392,8 +385,6 @@ module.exports = {
             msg: '获取失败'
           })
         } else {
-          // updateTagsData()
-        //   getAllArticlesNum()
           res.send({
             code: 0,
             data: result,
@@ -526,7 +517,7 @@ module.exports = {
       const query = { _id: ObjectID(req.body.id) }
       const body = req.body
       if (body.liked) {
-         likedContent = {
+        likedContent = {
           $pull: {
             likes: body.username
           }
@@ -537,7 +528,7 @@ module.exports = {
             likes: body.username
           }
         }
-      } 
+      }
       collection.updateOne(query, likedContent, err => {
         if (err) {
           res.send({
@@ -551,7 +542,7 @@ module.exports = {
           })
         }
         db.close()
-      })         
+      })
     })
   },
   fetchTagsData (req, res) {
@@ -698,25 +689,30 @@ module.exports = {
     })
   },
   comment (req, res) {
-    MongoClient.connect(url, config, (err, db) => {
+    MongoClient.connect(url, config, async (err, db) => {
       if (err) throw err
       const dbo = db.db('blog')
-      const { comment, id } = req.body
-      const query = { _id: ObjectID(id) }
-      const time = new Date()
-      const ip = getClientIp(req)
-      // 更新评论
-      const updateContent = {
-        $addToSet: {
-          comments: {
-            comment,
-            time,
-            user: ip
-          }
-        }
+      const token = req.get('userToken')
+      // 验证 token
+      const vaild = await isVaildToken(dbo, token)
+      const collection = dbo.collection(commentCollection)
+      if (!vaild) {
+        res.send({
+          code: 1,
+          msg: 'token 失效，请重新登陆'
+        })
+
+        db.close()
+        return
+      }
+      const date = (new Date()).getTime()
+      const commentData = {
+        ...req.body,
+        date: date,
+        reply: []
       }
 
-      dbo.collection(articleCollection).updateOne(query, updateContent, err => {
+      collection.insertOne(commentData, err => {
         if (err) {
           res.send({
             code: 1,
@@ -725,11 +721,7 @@ module.exports = {
         } else {
           res.send({
             code: 0,
-            msg: '评论成功',
-            data: {
-              time,
-              user: ip
-            }
+            data: date
           })
         }
 
@@ -737,7 +729,78 @@ module.exports = {
       })
     })
   },
+  commentReply (req, res) {
+    MongoClient.connect(url, config, async (err, db) => {
+      if (err) throw err
+      const dbo = db.db('blog')
+      const token = req.get('userToken')
+      const query = { _id: ObjectID(req.body.commentId) }
+      // 验证 token
+      const vaild = await isVaildToken(dbo, token)
+      const collection = dbo.collection(commentCollection)
+      if (!vaild) {
+        res.send({
+          code: 1,
+          msg: 'token 失效，请重新登陆'
+        })
 
+        db.close()
+        return
+      }
+      const date = (new Date()).getTime()
+      const replyData = {
+        $push: {
+          reply: {
+            username: req.body.username,
+            content: req.body.content,
+            date
+          }
+        }
+      }
+      collection.updateOne(query, replyData, err => {
+        if (err) {
+          res.send({
+            code: 1,
+            msg: '回复失败'
+          })
+        } else {
+          res.send({
+            code: 0,
+            data: '回复成功'
+          })
+        }
+        db.close()
+      })
+    })
+  },
+  fetchComments (req, res) {
+    MongoClient.connect(url, config, (err, db) => {
+      if (err) throw err
+      const dbo = db.db('blog')
+      const query = { articleId: req.query.id }
+      const collection = dbo.collection(commentCollection)
+      collection.find(query).count((err, num) => {
+        if (err) throw err
+        collection.find(query).sort({'date': -1}).toArray((err, result) => {
+          if (err) {
+            res.send({
+              code: 1,
+              msg: '查找失败',
+              data: []
+            })
+          } else {
+            res.send({
+              code: 0,
+              data: result,
+              total: num
+            })
+          }
+
+          db.close()
+        })
+      })
+    })
+  },
   fetchVisits (req, res) {
     MongoClient.connect(url, config, (err, db) => {
       if (err) throw err
@@ -776,7 +839,6 @@ function initData () {
   // 更新并缓存标签数据
   updateTagsData()
   // 获取文章总数
-//   getAllArticlesNum()
 }
 
 // 更新标签信息

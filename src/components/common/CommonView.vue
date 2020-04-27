@@ -3,13 +3,13 @@
         <ul>
           <li class="common-view-list" v-for="(article, index) in categoryarticle" :key="index">
             <div class="common-view-box">
-              <div class="common-view-content" @click="getCurrentArticleContent(article._id)">
-                <div class="common-view-title" >
+              <div class="common-view-content">
+                <div class="common-view-title" @click="getCurrentArticleContent(article._id)">
                   <h2 :title="article.articleTitle">{{article.articleTitle}}</h2>
                 </div>
                 <div class="common-content" @click="getCurrentArticleContent(article._id)">{{article.articleContent | handleContentHTML}}</div>
                 <div class="common-view-detail">
-                  <div class="username">{{article.userName}}</div>
+                  <div class="username">{{article.username}}</div>
                   <span class="common-view-tag" v-for="(tag, index) in article.articleTags" :key="index">{{tag}}</span>
                 </div>
               </div>
@@ -21,7 +21,7 @@
               <v-action
                   :likes="article.likes"
                   :articleid="article._id"
-                  :username="article.userName">
+                  :username="article.username">
               </v-action>
             </div>
          </li>
@@ -75,10 +75,10 @@ $box_shadow: #eee;
   position: relative;
   .common-view-list{
     @include flex-col;
+    border-bottom: 1px solid $back_Color;
     .common-view-box{
       @include flex-row;
       padding: 15px;
-      border-bottom: 1px solid $back_Color;
       font-size: 0;
       .common-view-content{
         @include flex-col;

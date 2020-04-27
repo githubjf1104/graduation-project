@@ -89,6 +89,13 @@ module.exports = {
       handler.comment(req, res)
     })
 
+    app.post('/commentReply', (req, res) => {
+      handler.commentReply(req, res)
+    })
+
+    app.get('/fetchComments', (req, res) => {
+      handler.fetchComments(req, res)
+    })
     app.get('/fetchVisits', (req, res) => {
       handler.fetchVisits(req, res)
     })
