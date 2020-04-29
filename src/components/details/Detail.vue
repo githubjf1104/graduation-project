@@ -56,7 +56,7 @@
             <div class="comment-content">{{item.comment}}</div>
             <div class="opration">
               <span class="time">{{item.date | timeFormat}}</span>
-              <span class="comment" @click="handleShowComment(index)"><i class="iconfont">&#xe601;</i>回复</span>
+              <span class="comment" @click="handleShowComment(index)"><i class="iconfont">&#xe601;</i>回复({{item.reply.length}})</span>
             </div>
             <div class="write-comment" v-if="showComment && flag===index">
               <v-comment

@@ -4,7 +4,7 @@
             <span class="iconfont" :class="{'like': liked}">&#xe60c;</span>
             <span class="count">{{likes.length}}</span>
         </div>
-        <div class="action-comment">
+        <div class="action-comment" @click="handleComment">
             <span class="iconfont">&#xe601;</span>
             <span class="text">评论</span>
         </div>
@@ -40,6 +40,9 @@ export default {
     }
   },
   methods: {
+    handleComment () {
+      this.$emit('comment', this.articleid)
+    },
     addLikeCount () {
       if (!this.liked || this.likes === []) {
         this.handleGiveLike().then(() => {

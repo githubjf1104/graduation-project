@@ -37,13 +37,18 @@
        </div>
       </div>
       <div class="index-right">
-        <div class="index-article" ref="index-article">
-          <div class="hotarticle-list"></div>
-          <ul>
-            <li class="title-list" v-for="(item, index) in hostArticle" :key="index">
-              <div class="title" @click="getCurrentArticleContent(item._id)">{{item.articleTitle}}</div>
-            </li>
-          </ul>
+        <div class="index-info">
+            <div class="author-word">
+              <h2>作者</h2>
+            </div>
+            <div class="index-username">
+                <ul>
+                  <li class="author-list" v-for="(author, index) in indexAuthor" :key="index">
+                    <div class="username" @click="handleToPersonalDetail(author.user)">{{author.user}}</div>
+                  </li>
+                </ul>
+                <div class="all-list"><span>榜单</span><i class="iconfont">&#xe70c;</i></div>
+            </div>
         </div>
         <div class="index-calendar">
             <el-date-picker
@@ -52,11 +57,19 @@
               placeholder="选择日期时间">
             </el-date-picker>
         </div>
+        <div class="index-article" ref="index-article">
+          <div class="hotarticle-list"></div>
+          <ul>
+            <li class="title-list" v-for="(item, index) in hostArticle" :key="index">
+              <div class="title" @click="getCurrentArticleContent(item._id)">{{item.articleTitle}}</div>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
 </template>
 <script>
-import { fetchAllArticles, fetchArticleContentById } from '@/api/index'
+import { fetchAllArticles, fetchArticleContentById, fetchAllUser } from '@/api/index'
 import noData from '@/components/common/noData.vue'
 
 export default {
@@ -69,6 +82,7 @@ export default {
   data () {
     return {
       articleList: [],
+      authorList: [],
       pageSize: 6,
       currentPage: 1,
       total: 0,
@@ -80,7 +94,7 @@ export default {
   computed: {
     // 作者列表
     indexAuthor () {
-      return this.articleList.slice(0, 4)
+      return this.authorList.slice(0, 3)
     },
     hostArticle () {
       return this.articleList.slice(0, 6)
@@ -88,6 +102,7 @@ export default {
   },
   created () {
     this.getAllArticles()
+    this.getAllUser()
     this.Bus.$on('handlesearch', content => {
       this.searchContent = content
       this.currentPage = 1
@@ -136,6 +151,19 @@ export default {
         }
       }).catch(() => {
         this.loading = false
+      })
+    },
+    // 查询所有用户
+    getAllUser () {
+      fetchAllUser().then(res => {
+        if (res.data.code === 0 && res.status === 200) {
+          this.authorList = res.data.data
+        } else {
+          this.$message.error('获取用户失败')
+        }
+      }).catch(err => {
+        console.log(err)
+        this.$message.error('获取用户失败')
       })
     },
     // 转到用户个人中心
@@ -280,7 +308,7 @@ $box_shadow: #d8d5d5;
           @include flex-row;
           height: 40px;
           line-height: 40px;
-          padding: 10px;
+          padding: 0 10px;
           cursor: pointer;
           &:first-child{
             border-top: 1px solid $back_Color;
@@ -329,10 +357,11 @@ $box_shadow: #d8d5d5;
       }
     }
     .index-article{
+      margin-top: 20px;
       background: $background;
       box-shadow: 1px 0px 10px 0 $box_shadow;
       .title-list{
-        padding:  5px  20px;
+        padding:  0  20px;
         height: 30px;
         line-height: 30px;
         &:hover{

@@ -40,18 +40,18 @@ export default {
   data () {
     // 校验用户名
     var validateUsername = (rule, value, callback) => {
-      var reg = /^[a-zA-Z0-9]{3,11}$/
+      var reg = /^[a-zA-Z0-9]{4,11}$/
       if (value === '') {
         callback(new Error('请输入用户名'))
       } else if (!(reg.test(value))) {
-        callback(new Error('请输入3-11位数字或字符串的用户名'))
+        callback(new Error('请输入5-11位数字或字符串的用户名'))
       } else {
         callback()
       }
     }
     // 校验密码
     var validatePass = (rule, value, callback) => {
-      var reg = /^[a-zA-Z]\w{3,17}$/
+      var reg = /^[a-zA-Z]\w{4,17}$/
       if (value === '') {
         callback(new Error('请输入密码'))
       } else if (!(reg.test(value))) {

@@ -21,7 +21,8 @@
               <v-action
                   :likes="article.likes"
                   :articleid="article._id"
-                  :username="article.username">
+                  :username="article.username"
+                  @comment="getCurrentArticleContent">
               </v-action>
             </div>
          </li>

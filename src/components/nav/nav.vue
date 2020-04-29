@@ -116,7 +116,7 @@ export default {
       } else if (command === 'personal') {
         vaildToken().then(res => {
           if (res.data.code === 0) {
-            this.$router.push('/personal')
+            this.$router.push({name: 'PersonArticle', params: {username: this.username}})
           } else {
             this.$message({
               type: 'info',

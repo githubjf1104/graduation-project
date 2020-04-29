@@ -8,21 +8,16 @@ const articleCollection = 'articles'
 const questionCollection = 'questions'
 const replyCollection = 'replys'
 const commentCollection = 'comments'
-
-let tagsCacheData = []
-let tagsArticlesCacheData = {}
 let totalReply = 0
 // 标签数据是否改变
-let isTagsChange = true
 let likedContent = {}
-initData()
 
 module.exports = {
   // 验证
   vaildToken (req, res) {
     MongoClient.connect(url, config, async (err, db) => {
       if (err) throw err
-      const dbo = db.db('blog')
+      const dbo = db.db('project')
       const Authorization = req.get('userToken')
       if (Authorization !== undefined && Authorization != null && Authorization !== '') {
         const token = Authorization
@@ -49,11 +44,32 @@ module.exports = {
       }
     })
   },
+  // 查询用户集合
+  fetchAllUser (req, res) {
+    MongoClient.connect(url, config, (err, db) => {
+      if (err) throw err
+      const dbo = db.db('project')
+      const collection = dbo.collection('user')
+      collection.find().toArray((err, result) => {
+        if (err) {
+          res.send({
+            code: 1,
+            msg: '获取失败'
+          })
+        } else {
+          res.send({
+            code: 0,
+            data: result
+          })
+        }
+      })
+    })
+  },
   // 发表文章
   pushArticle (req, res) {
     MongoClient.connect(url, config, async (err, db) => {
       if (err) throw err
-      const dbo = db.db('blog')
+      const dbo = db.db('project')
       const token = req.get('userToken')
       // 验证 token
       const vaild = await isVaildToken(dbo, token)
@@ -88,8 +104,6 @@ module.exports = {
               msg: '更新失败'
             })
           } else {
-            updateTagsData()
-            isTagsChange = true
             res.send({
               code: 0,
               data: '更新成功'
@@ -113,7 +127,6 @@ module.exports = {
               msg: '发布失败'
             })
           } else {
-            updateTagsData()
             res.send({
               code: 0,
               data: '发布成功'
@@ -129,7 +142,7 @@ module.exports = {
   fetchAllArticles (req, res) {
     MongoClient.connect(url, config, (err, db) => {
       if (err) throw err
-      const dbo = db.db('blog')
+      const dbo = db.db('project')
       const query = req.query
       // ~~取整
       const size = ~~query.pageSize
@@ -173,7 +186,7 @@ module.exports = {
   fetchArticleContentById (req, res) {
     MongoClient.connect(url, config, (err, db) => {
       if (err) throw err
-      const dbo = db.db('blog')
+      const dbo = db.db('project')
       const query = { _id: ObjectID(req.query.id) }
       const collection = dbo.collection(articleCollection)
       collection.findOne(query).then(result => {
@@ -198,7 +211,7 @@ module.exports = {
   deleteArticle (req, res) {
     MongoClient.connect(url, config, async (err, db) => {
       if (err) throw err
-      const dbo = db.db('blog')
+      const dbo = db.db('project')
       const token = req.get('userToken')
       // 验证 token
       const vaild = await isVaildToken(dbo, token)
@@ -234,7 +247,7 @@ module.exports = {
   publishedProblem (req, res) {
     MongoClient.connect(url, config, async (err, db) => {
       if (err) throw err
-      const dbo = db.db('blog')
+      const dbo = db.db('project')
       const token = req.get('userToken')
       // 验证 token
       const vaild = await isVaildToken(dbo, token)
@@ -303,7 +316,7 @@ module.exports = {
   fetchAllProblem (req, res) {
     MongoClient.connect(url, config, (err, db) => {
       if (err) throw err
-      const dbo = db.db('blog')
+      const dbo = db.db('project')
       const query = req.query
       const queryObj = {}
       const collection = dbo.collection(questionCollection)
@@ -337,7 +350,7 @@ module.exports = {
   deleteProblem (req, res) {
     MongoClient.connect(url, config, async (err, db) => {
       if (err) throw err
-      const dbo = db.db('blog')
+      const dbo = db.db('project')
       const token = req.get('userToken')
       // 验证 token
       const vaild = await isVaildToken(dbo, token)
@@ -375,7 +388,7 @@ module.exports = {
   fetchProblemContentById (req, res) {
     MongoClient.connect(url, config, (err, db) => {
       if (err) throw err
-      const dbo = db.db('blog')
+      const dbo = db.db('project')
       const query = { _id: ObjectID(req.query.id) }
       const collection = dbo.collection(questionCollection)
       collection.findOne(query).then(result => {
@@ -396,11 +409,11 @@ module.exports = {
       })
     })
   },
-  // 发表回复
+  // 发表问题回回答
   publishedReply (req, res) {
     MongoClient.connect(url, config, async (err, db) => {
       if (err) throw err
-      const dbo = db.db('blog')
+      const dbo = db.db('project')
       const token = req.get('userToken')
       // 验证 token
       const vaild = await isVaildToken(dbo, token)
@@ -465,11 +478,11 @@ module.exports = {
     })
   },
 
-  // 查询回复
+  // 查询问题回复
   fetchAllReply (req, res) {
     MongoClient.connect(url, config, (err, db) => {
       if (err) throw err
-      const dbo = db.db('blog')
+      const dbo = db.db('project')
       const query = { questionId: req.query.id }
       const collection = dbo.collection(replyCollection)
       collection.find(query).count((err, num) => {
@@ -499,7 +512,7 @@ module.exports = {
   giveLike (req, res) {
     MongoClient.connect(url, config, async (err, db) => {
       if (err) throw err
-      const dbo = db.db('blog')
+      const dbo = db.db('project')
       const token = req.get('userToken')
       // 验证 token
       const vaild = await isVaildToken(dbo, token)
@@ -533,59 +546,22 @@ module.exports = {
         if (err) {
           res.send({
             code: 1,
-            msg: '更新失败'
+            msg: '点赞失败'
           })
         } else {
           res.send({
             code: 0,
-            data: '更新成功'
+            data: '点赞成功'
           })
         }
         db.close()
       })
     })
   },
-  fetchTagsData (req, res) {
-    if (tagsCacheData.length && !isTagsChange) {
-      res.send({
-        code: 0,
-        data: tagsCacheData
-      })
-
-      return
-    }
-
-    updateTagsData(res)
-  },
-
-  fetchTagsArtilesData (req, res) {
-    if (!tagsCacheData.length) {
-      res.send({
-        code: 0,
-        msg: '没有标签数据',
-        data: []
-      })
-
-      return
-    }
-
-    if (!isTagsChange) {
-      res.send({
-        code: 0,
-        data: tagsArticlesCacheData
-      })
-
-      return
-    }
-
-    isTagsChange = false
-    searchTagsArticlesData(res)
-  },
-
   login (req, res) {
     MongoClient.connect(url, config, (err, db) => {
       if (err) throw err
-      const dbo = db.db('blog')
+      const dbo = db.db('project')
       const { user, password } = req.body
       const collection = dbo.collection('user')
       collection.findOne({ user, password }).then(result => {
@@ -624,7 +600,7 @@ module.exports = {
   loginOut (req, res) {
     MongoClient.connect(url, config, (err, db) => {
       if (err) throw err
-      const dbo = db.db('blog')
+      const dbo = db.db('project')
       const user = req.body.user
       const collection = dbo.collection('user')
       collection.findOne({user: user}).then(result => {
@@ -660,7 +636,7 @@ module.exports = {
   register (req, res) {
     MongoClient.connect(url, config, (err, db) => {
       if (err) throw err
-      const dbo = db.db('blog')
+      const dbo = db.db('project')
       const userinfo = req.body
       const collection = dbo.collection('user')
       collection.findOne({user: userinfo.user}).then(result => {
@@ -688,10 +664,11 @@ module.exports = {
       })
     })
   },
+  // 评论
   comment (req, res) {
     MongoClient.connect(url, config, async (err, db) => {
       if (err) throw err
-      const dbo = db.db('blog')
+      const dbo = db.db('project')
       const token = req.get('userToken')
       // 验证 token
       const vaild = await isVaildToken(dbo, token)
@@ -729,10 +706,11 @@ module.exports = {
       })
     })
   },
+  // 回复
   commentReply (req, res) {
     MongoClient.connect(url, config, async (err, db) => {
       if (err) throw err
-      const dbo = db.db('blog')
+      const dbo = db.db('project')
       const token = req.get('userToken')
       const query = { _id: ObjectID(req.body.commentId) }
       // 验证 token
@@ -776,7 +754,7 @@ module.exports = {
   fetchComments (req, res) {
     MongoClient.connect(url, config, (err, db) => {
       if (err) throw err
-      const dbo = db.db('blog')
+      const dbo = db.db('project')
       const query = { articleId: req.query.id }
       const collection = dbo.collection(commentCollection)
       collection.find(query).count((err, num) => {
@@ -800,102 +778,14 @@ module.exports = {
         })
       })
     })
-  },
-  fetchVisits (req, res) {
-    MongoClient.connect(url, config, (err, db) => {
-      if (err) throw err
-      const dbo = db.db('blog')
-      const query = { user: 'admin' }
-      const collection = dbo.collection('user')
-      // visits 自增1
-      const updateContent = {
-        $inc: {
-          visits: 1
-        }
-      }
-
-      collection.updateOne(query, updateContent, err => {
-        if (err) {
-          res.send({
-            code: 1,
-            msg: '获取访问量失败'
-          })
-        } else {
-          collection.findOne(query).then(result => {
-            res.send({
-              code: 0,
-              data: result.visits
-            })
-
-            db.close()
-          })
-        }
-      })
-    })
   }
-}
-
-function initData () {
-  // 更新并缓存标签数据
-  updateTagsData()
-  // 获取文章总数
-}
-
-// 更新标签信息
-function updateTagsData (res) {
-  MongoClient.connect(url, config, (err, db) => {
-    if (err) throw err
-    const dbo = db.db('blog')
-    dbo.collection(articleCollection).find({ tags: new RegExp('') }).toArray((err, result) => {
-      if (err) throw err
-      let arry = []
-      result.forEach(item => {
-        arry.push(...item.tags)
-      })
-
-      arry = [...new Set(arry)]
-      tagsCacheData = arry
-      if (res) {
-        res.send({
-          code: 0,
-          data: arry
-        })
-      }
-
-      db.close()
-    })
-  })
-}
-
-// 搜索文章标签数据
-function searchTagsArticlesData (res) {
-  MongoClient.connect(url, config, (err, db) => {
-    if (err) throw err
-    const dbo = db.db('blog')
-    const lastIndex = tagsCacheData.length - 1
-    tagsArticlesCacheData = {}
-    tagsCacheData.forEach((item, i) => {
-      dbo.collection(articleCollection).find({ tags: item }).toArray((err, result) => {
-        if (err) throw err
-        tagsArticlesCacheData[item] = result.length
-        if (res && i === lastIndex) {
-          res.send({
-            code: 0,
-            data: tagsArticlesCacheData
-          })
-        }
-
-        db.close()
-      })
-    })
-  })
 }
 
 // 获取问题答复总数
 function getReplyNum (query) {
   MongoClient.connect(url, config, (err, db) => {
     if (err) throw err
-    const dbo = db.db('blog')
+    const dbo = db.db('project')
     dbo.collection(questionCollection).find(query).count((err, result) => {
       if (err) throw err
       totalReply = result
@@ -908,7 +798,7 @@ function getReplyNum (query) {
 function delReply (query) {
   MongoClient.connect(url, config, (err, db) => {
     if (err) throw err
-    const dbo = db.db('blog')
+    const dbo = db.db('project')
     dbo.collection(replyCollection).deleteMany(query, (err, res) => {
       if (err) throw err
       console.log('删除数据条数 ' + res.deletedCount)

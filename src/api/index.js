@@ -16,6 +16,10 @@ export function fetchAllArticles (obj) {
   return axios.get('/api/fetchAllArticles' + objToUrlParam(obj))
 }
 
+export function fetchAllUser () {
+  return axios.get('/api/fetchAllUser')
+}
+
 export function fetchArticleContentById (id) {
   return axios.get(`/api/fetchArticleContentById?id=${id}`)
 }
@@ -56,14 +60,6 @@ export function giveLike (obj) {
   return axios.post('/api/giveLike', obj)
 }
 
-export function fetchTagsData () {
-  return axios.get('/api/fetchTagsData')
-}
-
-export function fetchTagsArtilesData () {
-  return axios.get('/api/fetchTagsArtilesData')
-}
-
 export function login (data) {
   return axios.post('/api/login', data)
 }
@@ -86,10 +82,6 @@ export function commentReply (data) {
 
 export function fetchComments (id) {
   return axios.get(`/api/fetchComments?id=${id}`)
-}
-
-export function fetchVisits () {
-  return axios.get('/api/fetchVisits')
 }
 
 export function vaildToken () {

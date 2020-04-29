@@ -10,7 +10,7 @@
             <div class="content" v-show="showcontent">{{item.questionContent | handleContentHTML}}</div>
             <div class="reply">
               <span class="username" @click="handleToPersonalDetail(item.username)" v-show="!showcontent">{{item.username}}</span>
-              <div class="reply-btn"><i class="iconfont">&#xe61b;</i>写回答</div>
+              <div class="reply-btn" @click="handleToQuestionDetail(item._id)"><i class="iconfont">&#xe61b;</i>写回答</div>
               <div class="date">{{item.date | timeFormat}}</div>
               <div class="operation" v-show="showcontent && showEmpty">
                 <span @click="handleDelQustion(item._id)">删除</span>
@@ -108,7 +108,7 @@ export default {
   .question-info{
     flex: 1;
     .question-item{
-      padding: 20px 0;
+      padding: 10px 0;
     //   width: 90%;
       border-bottom: 1px solid #eee;
       .box{

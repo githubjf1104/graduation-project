@@ -18,13 +18,19 @@ module.exports = {
       console.log(`正在监听${hostname}:${port}\n\n`)
     })
   },
-  interface (app) {
+  serverInterface (app) {
     app.post('/pushArticle', (req, res) => {
       handler.pushArticle(req, res)
     })
+
     app.post('/vaildToken', (req, res) => {
       handler.vaildToken(req, res)
     })
+
+    app.get('/fetchAllUser', (req, res) => {
+      handler.fetchAllUser(req, res)
+    })
+
     app.get('/fetchAllArticles', (req, res) => {
       handler.fetchAllArticles(req, res)
     })
@@ -65,14 +71,6 @@ module.exports = {
       handler.giveLike(req, res)
     })
 
-    app.get('/fetchTagsData', (req, res) => {
-      handler.fetchTagsData(req, res)
-    })
-
-    app.get('/fetchTagsArtilesData', (req, res) => {
-      handler.fetchTagsArtilesData(req, res)
-    })
-
     app.post('/login', (req, res) => {
       handler.login(req, res)
     })
@@ -95,9 +93,6 @@ module.exports = {
 
     app.get('/fetchComments', (req, res) => {
       handler.fetchComments(req, res)
-    })
-    app.get('/fetchVisits', (req, res) => {
-      handler.fetchVisits(req, res)
     })
   }
 }

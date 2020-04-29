@@ -61,7 +61,7 @@ export default {
       if (value === '') {
         callback(new Error('请输入密码'))
       } else if (!(reg.test(value))) {
-        callback(new Error('以字母开头，长度在4-18之间，只能包含字符、数字和下划线'))
+        callback(new Error('以字母开头，长度在5-18之间，只能包含字符、数字和下划线'))
       } else {
         callback()
       }

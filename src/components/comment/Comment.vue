@@ -60,6 +60,8 @@ export default {
             this.showBtn = false
             this.$emit('inputblur')
             this.$emit('commentinfo')
+          } else if (res.data.code === 1) {
+            this.$message.info('请先登录')
           }
         })
       } else {
@@ -74,6 +76,8 @@ export default {
             this.showBtn = false
             this.$emit('inputblur')
             this.$emit('commentinfo')
+          } else if (res.data.code === 1) {
+            this.$message.info('请先登录')
           }
         })
       }
