@@ -558,6 +558,96 @@ module.exports = {
       })
     })
   },
+
+  // 收藏功能
+  collect (req, res) {
+    MongoClient.connect(url, config, async (err, db) => {
+      if (err) throw err
+      const dbo = db.db('project')
+      const token = req.get('userToken')
+      // 验证 token
+      const vaild = await isVaildToken(dbo, token)
+      if (!vaild) {
+        res.send({
+          code: 1,
+          msg: 'token 失效，请重新登陆'
+        })
+
+        db.close()
+        return
+      }
+      const collection = dbo.collection('collect')
+      if (req.body.id) {
+        const query = { _id: ObjectID(req.body.id) }
+        collection.deleteOne(query, err => {
+          if (err) {
+            res.send({
+              code: 1,
+              msg: '取消收藏失败'
+            })
+          } else {
+            res.send({
+              code: 0,
+              msg: '取消收藏成功'
+            })
+          }
+          db.close()
+        })
+      } else {
+        const date = (new Date()).getTime()
+        const collectData = {
+          username: req.body.username,
+          articleId: req.body.articleId,
+          date
+        }
+        collection.insertOne(collectData, err => {
+          if (err) {
+            res.send({
+              code: 1,
+              msg: '收藏失败'
+            })
+          } else {
+            res.send({
+              code: 0,
+              msg: '收藏成功'
+            })
+          }
+          db.close()
+        })
+      }
+    })
+  },
+  fetchCollect (req, res) {
+    MongoClient.connect(url, config, (err, db) => {
+      if (err) throw err
+      const dbo = db.db('project')
+      const collection = dbo.collection('collect')
+      const query = {}
+      if (req.query.username) {
+        query.username = req.query.username
+      } else if (req.query.articleId) {
+        query.articleId = req.query.articleId
+      }
+      collection.find(query).count((err, num) => {
+        if (err) throw err
+        collection.find(query).sort({'date': -1}).toArray((err, result) => {
+          if (err) {
+            res.send({
+              code: 1,
+              msg: '获取数据失败',
+              data: []
+            })
+          } else {
+            res.send({
+              code: 0,
+              data: result,
+              total: num
+            })
+          }
+        })
+      })
+    })
+  },
   login (req, res) {
     MongoClient.connect(url, config, (err, db) => {
       if (err) throw err
@@ -567,7 +657,7 @@ module.exports = {
       collection.findOne({ user, password }).then(result => {
         if (!result) {
           res.send({
-            code: 1,
+            code: -1,
             msg: '没有查询到该用户'
           })
         } else {

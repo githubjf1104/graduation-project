@@ -60,6 +60,14 @@ export function giveLike (obj) {
   return axios.post('/api/giveLike', obj)
 }
 
+export function collect (obj) {
+  return axios.post('/api/collect', obj)
+}
+
+export function fetchCollect (obj) {
+  return axios.get('/api/fetchCollect' + objToUrlParam(obj))
+}
+
 export function login (data) {
   return axios.post('/api/login', data)
 }

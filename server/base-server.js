@@ -71,6 +71,14 @@ module.exports = {
       handler.giveLike(req, res)
     })
 
+    app.post('/collect', (req, res) => {
+      handler.collect(req, res)
+    })
+
+    app.get('/fetchCollect', (req, res) => {
+      handler.fetchCollect(req, res)
+    })
+
     app.post('/login', (req, res) => {
       handler.login(req, res)
     })

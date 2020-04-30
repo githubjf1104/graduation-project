@@ -9,18 +9,16 @@
             <span class="comment-count">{{total}}</span>
         </div>
         <div class="btn-collect">
-            <span class="iconfont">&#xe600;</span>
-            <span class="collect-count">0</span>
+            <span class="iconfont" @click="handleCollect" :class="{'collected': collected}">&#xe600;</span>
+            <span class="collect-count">{{collectNum}}</span>
         </div>
     </div>
 </template>
 <script>
-import { giveLike } from '@/api/index'
-// import action from '@/components/common/Action'
+import { giveLike, collect, fetchCollect } from '@/api/index'
 
 export default {
   name: 'panel',
-  // mixins: [action],
   props: {
     likes: {
       type: Array
@@ -43,7 +41,11 @@ export default {
   data () {
     return {
       liked: false,
-      name: ''
+      name: '',
+      id: '',
+      collected: false,
+      collectData: [],
+      collectNum: 0
     }
   },
   created () {
@@ -51,6 +53,7 @@ export default {
     if (this.likes.indexOf(this.name) !== -1) {
       this.liked = true
     }
+    this.getCollectData()
   },
   methods: {
     handleLikes () {
@@ -72,6 +75,40 @@ export default {
         liked: this.liked
       }
       return giveLike(likeObj).then(res => {
+      })
+    },
+    handleCollect () {
+      let collectObj = {
+        id: this.id,
+        // collected: this.collected,
+        username: this.name,
+        articleId: this.articleid
+      }
+      collect(collectObj).then(res => {
+        if (res.data.code === 0 && res.status === 200) {
+          this.collected = !this.collected
+          if (!this.collected) {
+            this.id = ''
+          }
+          this.getCollectData()
+        }
+      })
+    },
+    getCollectData () {
+      let obj = {
+        articleId: this.articleid
+      }
+      fetchCollect(obj).then(res => {
+        if (res.data.code === 0 && res.status === 200) {
+          this.collectData = res.data.data
+          this.collectNum = res.data.total
+          this.collectData.forEach(item => {
+            if (item.username === this.name && item.articleId === this.articleid) {
+              this.id = item._id
+              this.collected = true
+            }
+          })
+        }
       })
     }
   }
@@ -102,6 +139,9 @@ $panel_shadow: rgba(0, 0, 0,.04);
           color: rgb(90, 90, 90);
       }
       &.like{
+        color: #528aaa;
+      }
+      &.collected{
         color: #528aaa;
       }
     }

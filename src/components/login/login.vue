@@ -101,6 +101,11 @@ export default {
               this.Bus.$emit('username', this.loginRuleForm.username)
               // this.saveUsername(this.loginRuleForm.username)
               this.$router.push('/index')
+            } else if (res.data.code === -1) {
+              this.$message({
+                type: 'error',
+                message: '该用户不存在'
+              })
             } else {
               this.$message({
                 type: 'error',

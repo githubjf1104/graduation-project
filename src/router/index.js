@@ -77,6 +77,11 @@ export default new Router({
         path: 'waitReply',
         name: 'WaitReply',
         component: () => import('@/components/common/WaitReply.vue')
+      },
+      {
+        path: 'collect',
+        name: 'Collect',
+        component: () => import('@/components/personal/component/collect.vue')
       }]
     },
     {

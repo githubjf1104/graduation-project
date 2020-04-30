@@ -15,8 +15,8 @@
             </div>
           </div>
           <div class="person-operation" v-if="username==currentUser">
-            <span class="del" @click="handleDelArticle(item._id)">删除</span>
-            <span class="fix" @click="handleChangeArticle(item._id)">修改</span>
+            <span class="del" @click="handleDelArticle(item._id)"><i class="iconfont">&#xe64c;</i>删除</span>
+            <span class="fix" @click="handleChangeArticle(item._id)"><i class="iconfont">&#xe61b;</i>修改</span>
           </div>
         </li>
       </ul>
@@ -173,18 +173,18 @@ export default {
         border-radius: 5px;
         line-height: 25px;
         text-align: center;
-        color: #fff;
-        background: #3a8b96;
-        border: 1px solid #eee;
-        font-size: 16px;
+        color: #5d5b5b;
+        font-size: 14px;
         cursor: pointer;
         &:hover{
           box-shadow: inset 0 0 10px 1px #eee;
         }
       }
+      .iconfont{
+        margin-right: 5px;
+      }
       .del{
         margin-right: 10px;
-        background: #b86969;
       }
     }
   }

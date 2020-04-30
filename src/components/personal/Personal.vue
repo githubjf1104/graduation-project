@@ -21,6 +21,7 @@
               <router-view :username="username"
                            :problemdata="problemList"
                            :showcontent="showContent"
+                           :collectdata="collectData"
                            @delproblem="getPersonalProblem"
                            @personArticle="receiveNum"/>
             </div>
@@ -38,8 +39,8 @@
               <p class="count">{{articleNum}}</p>
             </div>
              <div class="focus">
-              <p>关注</p>
-              <p class="count">0</p>
+              <p>收藏</p>
+              <p class="count">{{total}}</p>
             </div>
           </div>
         </div>
@@ -47,7 +48,7 @@
     </div>
 </template>
 <script>
-import { fetchAllProblem } from '@/api/index'
+import { fetchAllProblem, fetchCollect } from '@/api/index'
 
 export default {
   name: 'personal',
@@ -65,9 +66,16 @@ export default {
         label: '等待答复',
         value: 2,
         path: '/personal/waitReply'
+      },
+      {
+        label: '收藏',
+        value: 3,
+        path: '/personal/collect'
       }],
       showContent: false,
-      articleNum: 0
+      articleNum: 0,
+      collectData: [],
+      total: 0
     }
   },
   created () {
@@ -80,6 +88,7 @@ export default {
     }
     this.getPersonalProblem()
     this.showContent = true
+    this.getCollectData()
   },
   beforeDestroy () {
     this.showContent = false
@@ -112,6 +121,21 @@ export default {
       }).catch(err => {
         console.log(err)
         this.$message.success('获取数据失败')
+      })
+    },
+    getCollectData () {
+      let obj = {
+        username: this.username
+      }
+      fetchCollect(obj).then(res => {
+        if (res.data.code === 0 && res.status === 200) {
+          this.collectData = res.data.data
+          this.total = res.data.total
+        } else {
+          this.$message.error('获取数据失败')
+        }
+      }).catch(() => {
+        this.$message.error('获取数据失败')
       })
     }
   }
