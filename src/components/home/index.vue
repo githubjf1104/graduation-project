@@ -1,6 +1,6 @@
 <template>
     <div class="index-container" v-loading="loading">
-      <div class=index-left>
+      <div class="index-left">
         <ul class="list-ul">
           <li class="article-list" v-for="(article, index) in articleList" :key="index">
             <div class="article-content">
@@ -174,7 +174,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '../../assets/scss/mixin.scss';
+@import '@/assets/scss/mixin.scss';
 $background: #fff;
 $back_Color:#f5f5f5;
 $title_Color: #3a8b96;
@@ -184,7 +184,6 @@ $box_shadow: #d8d5d5;
 .index-container{
   position: relative;
   @include flex-row;
-  width: 960px;
   max-width: 960px;
   margin: 20px auto 0 auto;
   .index-left{
@@ -203,8 +202,8 @@ $box_shadow: #d8d5d5;
         border-bottom: 1px solid $back_Color;
         font-size: 0;
         .article-content{
-          @include flex-col;
           flex: 1;
+          @include flex-col;
           width: 0;
           .article-title{
             width: 80%;
@@ -373,6 +372,13 @@ $box_shadow: #d8d5d5;
           cursor: pointer;
         }
       }
+    }
+  }
+}
+@media screen and (max-width: 767px) {
+  .index-container{
+    .index-right{
+      display: none !important;
     }
   }
 }

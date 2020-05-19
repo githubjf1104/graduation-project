@@ -146,7 +146,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '../../assets/scss/mixin.scss';
+@import '@/assets/scss/mixin.scss';
 $navColor:rgb(124, 205, 252);
 $navColor_opacity:rgba(51, 7, 245, 0.1);
 $login_Color:#f5f5f5;
@@ -223,6 +223,13 @@ $login_Color:#f5f5f5;
           border: 1px solid $navColor;
         }
       }
+    }
+  }
+}
+@media screen and (max-width: 767px) {
+  .register-wrapper{
+    .register{
+      max-width: 340px;
     }
   }
 }

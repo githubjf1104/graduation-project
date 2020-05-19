@@ -23,18 +23,20 @@
             </div>
             <div class="nav-write" @click="handleEditArticle"><span><i class="iconfont">&#xe61b;</i>发表文章</span></div>
         </div>
+        <div class="navwrite-small" @click="handleEditArticle"><i class="iconfont">&#xe61b;</i></div>
         <div class="nav-right" v-show="!username">
             <div class="login" @click="handleLogin"><span>登录</span></div>
             <div class="register" @click="handleRegister"><span>注册</span></div>
         </div>
         <div class="nav-right-username" v-show="username">
-          <el-dropdown @command="handleDropdownEvent">
+          <el-dropdown @command="handleDropdownEvent" trigger="click">
             <span class="el-dropdown-link">
               {{username}}
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item icon="el-icon-right" command="loginOut">退出登录</el-dropdown-item>
               <el-dropdown-item icon="el-icon-user" command="personal">个人中心</el-dropdown-item>
+              <el-dropdown-item command="changePwd"><i class="iconfont">&#xe605;</i>修改密码</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
@@ -62,6 +64,11 @@ export default {
     this.Bus.$on('username', (username) => {
       this.$nextTick(() => {
         this.username = username
+      })
+    })
+    this.Bus.$on('changepwd', () => {
+      this.$nextTick(() => {
+        this.username = ''
       })
     })
   },
@@ -120,7 +127,18 @@ export default {
           } else {
             this.$message({
               type: 'info',
-              message: '请登录后再发表文章'
+              message: '请先登录'
+            })
+          }
+        })
+      } else if (command === 'changePwd') {
+        vaildToken().then(res => {
+          if (res.data.code === 0) {
+            this.$router.push('/changepwd')
+          } else {
+            this.$message({
+              type: 'info',
+              message: '请先登录'
             })
           }
         })
@@ -151,13 +169,13 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '../../assets/scss/mixin.scss';
+@import '@/assets/scss/mixin.scss';
 $navColor:rgb(82, 138, 170);
 $navColor_opacity:rgba(82, 138, 170, 0.1);
 $font_color: #333;
 .nav-wrapper{
     @include flex-row;
-    width: 960px;
+    max-width: 960px;
     height: 100%;
     line-height: 60px;
     margin: 0 auto;
@@ -246,6 +264,17 @@ $font_color: #333;
         }
       }
     }
+    .navwrite-small{
+      display: none;
+      cursor: pointer;
+      .iconfont{
+        min-width: 20px;
+        height: 20px;
+        line-height: 20px;
+        padding: 5px;
+
+      }
+    }
     .nav-right{
       @include flex-row;
       width: 100px;
@@ -267,6 +296,8 @@ $font_color: #333;
     }
     .nav-right-username{
       position: relative;
+      min-width: 60px;
+      text-align: right;
       @include flex-col;
       .el-dropdown-link{
         font-size: 16px;
@@ -275,5 +306,58 @@ $font_color: #333;
         cursor: pointer;
       }
     }
+}
+@media screen and (max-width: 767px) {
+  .nav-wrapper{
+    .nav-title{
+      font-size: 18px;
+      margin-right: 0;
+    }
+    .nav-left{
+      .nav-list{
+        .nav-item{
+          width: 40px!important;
+          font-size: 16px!important;
+        }
+      }
+    }
+    .nav-middle{
+      display: none;
+    }
+    .navwrite-small{
+      display: block;
+    }
+  }
+}
+@media screen and (max-width: 890px) and (min-width: 768px) {
+  .nav-wrapper{
+    .nav-search,.nav-righ{
+      display: none;
+    }
+    .navwrite-small{
+      display: block;
+    }
+  }
+}
+@media screen and (max-width: 375px) {
+  .nav-wrapper{
+    .nav-left{
+      .nav-list{
+        .nav-item{
+          width: 35px!important;
+          font-size: 16px!important;
+        }
+      }
+    }
+    .nav-right-username{
+     min-width: 50px!important;
+    }
+    .nav-right{
+      width: 50px;
+      .register{
+        display: none;
+      }
+    }
+  }
 }
 </style>

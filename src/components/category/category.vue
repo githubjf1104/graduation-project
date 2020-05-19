@@ -32,7 +32,7 @@
         </div>
       </div>
       <div class="category-middle">
-        <div class="common-view">
+        <div class="common-view-wrapper">
           <common-view :categoryarticle="categoryArticle"></common-view>
         </div>
         <div class="pagenation">
@@ -147,6 +147,7 @@ export default {
     // 切换路由
     handleCategory (categoryItem) {
       this.sliderCategoryIndex = categoryItem.value
+      this.sliderPublicIndex = -1
       this.articleType = categoryItem.category
       this.getCategoryArticles()
     },
@@ -160,6 +161,7 @@ export default {
     },
     handlePublic (publicItem) {
       this.sliderPublicIndex = publicItem.value
+      this.sliderCategoryIndex = -1
       this.articleType = publicItem.category
       this.getCategoryArticles()
     }
@@ -167,7 +169,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '../../assets/scss/mixin.scss';
+@import '@/assets/scss/mixin.scss';
 $background: #fff;
 $navColor:rgb(82, 138, 170);
 $back_Color:#f5f5f5;
@@ -244,7 +246,7 @@ $box_shadow: #eee;
     border-radius: 2px;
     border: 1px solid $box_shadow;
     box-shadow: 4px -4px 2px $box_shadow;
-    .common-view{
+    .common-view-wrapper{
       min-height: 490px;
       padding: 0 20px;
     }
@@ -255,5 +257,19 @@ $box_shadow: #eee;
     }
   }
 }
-
+@media screen and (max-width: 767px) {
+  .category-wrapper{
+    @include flex-col;
+    .category-slider{
+      width: 100%;
+      .slider-nav{
+        position: relative;
+        width: 100%;
+        .nav-list{
+          @include flex-row;
+        }
+      }
+    }
+  }
+}
 </style>

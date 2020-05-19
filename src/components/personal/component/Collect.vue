@@ -92,7 +92,7 @@ export default {
 }
 </script>
 <style lang='scss' scoped>
-@import '../../../assets/scss/mixin.scss';
+@import '@/assets/scss/mixin.scss';
 .collect-view{
   position: relative;
   padding-right: 20px;
@@ -123,9 +123,6 @@ export default {
         margin-right: 10px;
         color: #545252;
         cursor: pointer;
-        &:hover{
-          color: #528aaa;
-        }
         .iconfont{
           color: #528aaa;
           padding: 5px;
@@ -133,16 +130,35 @@ export default {
       }
       .detail{
         .date{
-        padding-left: 0;
+          padding-left: 0;
         }
         .tag{
-          min-width: 50px;
+          // min-width: 50px;
           padding:5px;
           border: 1px solid #eee;
-          text-align: center
+          text-align: center;
+          &:last-child{
+            margin-right: 0;
+          }
         }
       }
       .operation{
+        span{
+          display: inline-block;
+          padding: 0 5px;
+          min-width: 60px;
+          line-height: 25px;
+          font-size: 16px;
+          border: 1px solid #eee;
+          border-radius: 5px;
+          text-align: center;
+          cursor: pointer;
+          &:hover{
+            color: #528aaa;
+            border: 1px solid #528aaa;
+            box-shadow: inset 0 0 10px 1px #eee;
+          }
+        }
         .read{
             margin-left: 40px;
         }
@@ -153,6 +169,32 @@ export default {
     position: absolute;
     width: 100%;
     top: 0;
+  }
+}
+@media screen and (max-width: 767px){
+  .collect-view{
+    padding-right: 0!important;
+    .collect-view-list{
+      .body{
+        .detail{
+          .tag{
+            min-width: 35px;
+          }
+        }
+        .operation{
+          min-width: 126px;
+          span{
+            margin-right: 0!important;
+            padding: 0!important;
+          }
+          .read{
+            margin-right: 2px!important;
+            margin-left: 0!important;
+          }
+        }
+      }
+    }
+
   }
 }
 </style>

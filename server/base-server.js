@@ -91,6 +91,10 @@ module.exports = {
       handler.register(req, res)
     })
 
+    app.post('/changePwd', (req, res) => {
+      handler.changePwd(req, res)
+    })
+
     app.post('/comment', (req, res) => {
       handler.comment(req, res)
     })

@@ -80,6 +80,10 @@ export function register (data) {
   return axios.post('/api/register', data)
 }
 
+export function changePwd (data) {
+  return axios.post('/api/changePwd', data)
+}
+
 export function comment (data) {
   return axios.post('/api/comment', data)
 }

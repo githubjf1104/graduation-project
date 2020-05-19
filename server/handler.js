@@ -754,6 +754,49 @@ module.exports = {
       })
     })
   },
+  changePwd (req, res) {
+    MongoClient.connect(url, config, (err, db) => {
+      if (err) throw err
+      const dbo = db.db('project')
+      const userinfo = req.body
+      const collection = dbo.collection('user')
+      collection.findOne({user: userinfo.user}).then(result => {
+        if (!result) {
+          res.send({
+            code: -1,
+            msg: '该用户不存在'
+          })
+        } else {
+          if (userinfo.oldPwd !== result.password) {
+            res.send({
+              code: 2,
+              msg: '旧密码错误'
+            })
+          } else {
+            const updataData = {
+              $set: {
+                password: req.body.password
+              }
+            }
+            collection.updateOne({user: userinfo.user}, updataData, err => {
+              if (err) {
+                res.send({
+                  code: 1,
+                  msg: '修改失败'
+                })
+              } else {
+                res.send({
+                  code: 0,
+                  msg: '修改成功'
+                })
+              }
+              db.close()
+            })
+          }
+        }
+      })
+    })
+  },
   // 评论
   comment (req, res) {
     MongoClient.connect(url, config, async (err, db) => {

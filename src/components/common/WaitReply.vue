@@ -13,7 +13,7 @@
               <div class="reply-btn" @click="handleToQuestionDetail(item._id)"><i class="iconfont">&#xe61b;</i>写回答</div>
               <div class="date">{{item.date | timeFormat}}</div>
               <div class="operation" v-show="showcontent && showEmpty">
-                <span @click="handleDelQustion(item._id)">删除</span>
+                <span @click="handleDelQustion(item._id)"><i class="iconfont">&#xe64c;</i>删除</span>
               </div>
               <!-- <div class="rely-num">{{replyNum}}个回答</div> -->
             </div>
@@ -92,11 +92,11 @@ export default {
 }
 </script>
 <style lang='scss' scoped>
-@import '../../assets/scss/mixin.scss';
+@import '@/assets/scss/mixin.scss';
 
 .wait-reply{
   @include flex-col;
-  padding: 0 20px;
+  // padding: 0 20px;
   .header{
     height: 20px;
     line-height: 20px;
@@ -117,6 +117,7 @@ export default {
       .question{
         display: inline-block;
         vertical-align: middle;
+        max-width: 350px;
         margin-left: 20px;
         line-height: 30px;
         font-size: 20px;
@@ -148,14 +149,15 @@ export default {
           cursor: pointer;
         }
         .reply-btn{
+          padding: 0 5px;
           line-height: 25px;
-          // border: 1px solid #528aaa;
           border-radius: 10px;
           font-size: 16px;
           color: #528aaa;
           margin-right: 30px;
           cursor: pointer;
           &:hover{
+            border: 1px solid #528aaa;
             background: #eee;
           }
         }
@@ -172,10 +174,15 @@ export default {
             line-height: 25px;
             font-size: 16px;
             cursor: pointer;
+            border: 1px solid #eee;
+            border-radius: 5px;
             &:hover{
-              background: #528aaa;
-              border-radius: 5px;
-              color: #fff;
+              border: 1px solid #528aaa;
+              box-shadow: inset 0 0 10px 1px #eee;
+              color: #528aaa;
+            }
+            .iconfont{
+              margin-right: 10px;
             }
           }
         }
@@ -185,6 +192,16 @@ export default {
           line-height: 25px;
           font-size: 16px;
         }
+      }
+    }
+  }
+}
+@media screen and (max-width: 375px){
+  .question-info{
+    .question-item{
+      .question{
+        max-width: 280px!important;
+        margin-left: 0!important;
       }
     }
   }

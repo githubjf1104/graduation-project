@@ -115,7 +115,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '../../assets/scss/mixin.scss';
+@import '@/assets/scss/mixin.scss';
 
 .question-detail{
   @include flex-col;
@@ -185,17 +185,18 @@ export default {
       @include flex-row;
       justify-content: flex-end;
       button{
-        font-size: 20px;
         line-height: 25px;
         width: 80px;
         padding: 0 5px;
-        border: 1px solid #528aaa;
+        font-size: 20px;
+        border: 1px solid #eee;
         border-radius: 5px;
+        background: #fff;
         cursor: pointer;
         text-align: center;
         &:hover{
-          background: #528aaa;
-          color: #fff;
+          border: 1px solid #528aaa;
+          color: #528aaa;
         }
       }
     }

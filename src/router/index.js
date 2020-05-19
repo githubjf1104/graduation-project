@@ -93,6 +93,11 @@ export default new Router({
       path: '/register',
       name: 'Register',
       component: () => import('@/components/register/Register.vue')
+    },
+    {
+      path: '/changepwd',
+      name: 'ChangePwd',
+      component: () => import('@/components/changepwd/ChangePwd.vue')
     }
   ]
 })

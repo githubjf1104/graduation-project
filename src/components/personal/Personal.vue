@@ -18,12 +18,13 @@
                  </router-link>
             </div>
             <div class="content-item">
-              <router-view :username="username"
-                           :problemdata="problemList"
-                           :showcontent="showContent"
-                           :collectdata="collectData"
-                           @delproblem="getPersonalProblem"
-                           @personArticle="receiveNum"/>
+              <router-view
+                :username="username"
+                :problemdata="problemList"
+                :showcontent="showContent"
+                :collectdata="collectData"
+                @delproblem="getPersonalProblem"
+                @personArticle="receiveNum"/>
             </div>
         </div>
       </div>
@@ -142,7 +143,7 @@ export default {
 }
 </script>
 <style lang='scss' scoped>
-@import '../../assets/scss/mixin.scss';
+@import '@/assets/scss/mixin.scss';
 
 .personal-wrapper{
   position: relative;
@@ -158,6 +159,7 @@ export default {
       width: 100%;
       border: 1px solid #eee;
       background: #fff;
+      box-shadow: 0px 0px 10px 0px #d8d5d5;
       .bg{
         height: 70px;
         background: #3e4c52;
@@ -176,6 +178,7 @@ export default {
       width: 100%;
       margin-top: 20px;
       background: #fff;
+      box-shadow: 0px 0px 10px 0px #d8d5d5;
       .conten-info{
           height: 50px;
           width: 100%;
@@ -198,7 +201,7 @@ export default {
       }
       .content-item{
         flex: 1;
-        padding: 20px;
+        padding: 20px 25px;
       }
     }
   }
@@ -211,6 +214,7 @@ export default {
       @include flex-col;
       height: 160px;
       background: #fff;
+      box-shadow: 0px 0px 10px 0px #d8d5d5;
       .profile{
         @include flex-row;
         padding: 10px;
@@ -257,6 +261,11 @@ export default {
         }
       }
     }
+  }
+}
+@media screen and (max-width: 767px){
+  .category-right{
+    display: none;
   }
 }
 </style>

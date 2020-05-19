@@ -65,7 +65,7 @@ export default {
 }
 </script>
 <style lang='scss' scoped>
-@import '../../assets/scss/mixin.scss';
+@import '@/assets/scss/mixin.scss';
 $background: #fff;
 $back_Color:#f5f5f5;
 $title_Color: #3a8b96;

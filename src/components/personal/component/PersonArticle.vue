@@ -106,7 +106,7 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-@import '../../../assets/scss/mixin.scss';
+@import '@/assets/scss/mixin.scss';
 
 .person-article{
   @include flex-col;
@@ -169,6 +169,7 @@ export default {
       font-size: 0;
       span{
         display: inline-block;
+        padding: 0 5px;
         min-width: 60px;
         border-radius: 5px;
         line-height: 25px;
@@ -176,8 +177,10 @@ export default {
         color: #5d5b5b;
         font-size: 14px;
         cursor: pointer;
+        border: 1px solid #eee;
         &:hover{
           box-shadow: inset 0 0 10px 1px #eee;
+          border: 1px solid #528aaa;
         }
       }
       .iconfont{

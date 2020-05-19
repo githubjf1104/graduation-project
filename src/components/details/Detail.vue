@@ -1,5 +1,5 @@
 <template>
-    <div class="detail-wraper" ref="detailWrapper">
+    <div class="detail-wrapper" ref="detailWrapper">
       <div class="article-detail" ref="articleDetail">
         <div class="title">
           <h1>{{articleData.articleTitle}}</h1>
@@ -164,8 +164,8 @@ export default {
 }
 </script>
 <style lang='scss' scoped>
-@import '../../assets/scss/mixin.scss';
-.detail-wraper{
+@import '@/assets/scss/mixin.scss';
+.detail-wrapper{
   max-width: 960px;
   min-height: 540px;
   margin: 0 auto;
@@ -341,5 +341,18 @@ export default {
     }
   }
 }
+@media screen and (max-width: 767px){
+  .detail-wrapper{
+    .article-detail{
+      .left-panel{
+        position: relative;
+        margin-top: 20px;
+        margin-left: 0;
+        top: 0;
+        width: 100%;
 
+      }
+    }
+  }
+}
 </style>

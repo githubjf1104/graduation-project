@@ -202,7 +202,7 @@ export default {
 }
 </script>
 <style lang="scss">
-@import '../../assets/scss/mixin.scss';
+@import '@/assets/scss/mixin.scss';
 .edit-wrapper{
   position: fixed;
   top: 0;
@@ -220,6 +220,7 @@ export default {
     font-size: 0;
     height: 40px;
     width: 100%;
+    min-width: 600px;
     padding: 5px 20px;
     background: #fff;
     z-index: 1;
@@ -311,6 +312,51 @@ export default {
         margin-left: 10px;
         margin-bottom: 5px;
         vertical-align: bottom;
+      }
+    }
+  }
+}
+@media screen and (min-width: 767px) and (max-width: 1100px) {
+  .edit-wrapper{
+    .mavon-editor{
+      .v-note-panel{
+        margin-top: 80px;
+      }
+    }
+  }
+}
+@media screen and (max-width: 767px) and (min-width: 376px) {
+  .edit-wrapper{
+    .edit-header{
+      .article-type{
+        .el-select{
+          width: 120px;
+        }
+      }
+    }
+    .mavon-editor{
+      .v-note-panel{
+        margin-top: 90px;
+      }
+    }
+  }
+}
+@media screen and (max-width: 375px) {
+  .edit-wrapper{
+    .edit-header{
+      .tilte-input{
+        max-width: 90px;
+        margin: 0 5px;
+      }
+      .article-type{
+        .el-select{
+          width: 90px;
+        }
+      }
+    }
+    .mavon-editor{
+      .v-note-panel{
+        margin-top: 160px;
       }
     }
   }

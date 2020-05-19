@@ -115,6 +115,8 @@ export default {
 }
 </script>
 <style lang='scss' scoped>
+@import '@/assets/scss/mixin.scss';
+
 $panel_back: #fff;
 $panel_Color: #b2bac2;
 $panel_shadow: rgba(0, 0, 0,.04);
@@ -161,6 +163,19 @@ $panel_shadow: rgba(0, 0, 0,.04);
       transform-origin: left top;
       transform: scale(.75);
       cursor: pointer;
+    }
+  }
+}
+@media screen and (max-width: 767px) {
+  .panel{
+    @include flex-row;
+    .btn-collect, .btn-comment{
+      margin-left: 30px;
+      margin-bottom: 0px;
+    }
+    .btn-like{
+      margin-left: 20px;
+      margin-bottom: 0px;
     }
   }
 }

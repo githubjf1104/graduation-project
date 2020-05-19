@@ -90,7 +90,7 @@ export default {
 }
 </script>
 <style lang='scss' scoped>
-@import '../../assets/scss/mixin.scss';
+@import '@/assets/scss/mixin.scss';
 
 .question-wrapper{
   position: relative;
