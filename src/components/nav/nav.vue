@@ -73,9 +73,12 @@ export default {
     })
   },
   mounted () {
-    this.$nextTick(() => {
-      this.username = localStorage.getItem('username')
-    })
+    let token = localStorage.getItem('token')
+    if (token) {
+      this.$nextTick(() => {
+        this.username = localStorage.getItem('username')
+      })
+    }
   },
   directives: {
   },
@@ -157,6 +160,13 @@ export default {
           this.username = ''
           localStorage.clear()
           this.$router.push('/index')
+        } else if (res.data.code === -1) {
+          this.$message({
+            type: 'info',
+            message: 'token已失效'
+          })
+          localStorage.clear()
+          this.username = ''
         } else {
           this.$message({
             type: 'error',
@@ -324,18 +334,12 @@ $font_color: #333;
     .nav-middle{
       display: none;
     }
-    .navwrite-small{
-      display: block;
-    }
   }
 }
 @media screen and (max-width: 890px) and (min-width: 768px) {
   .nav-wrapper{
     .nav-search,.nav-righ{
       display: none;
-    }
-    .navwrite-small{
-      display: block;
     }
   }
 }
@@ -357,6 +361,9 @@ $font_color: #333;
       .register{
         display: none;
       }
+    }
+    .navwrite-small{
+      display: block;
     }
   }
 }

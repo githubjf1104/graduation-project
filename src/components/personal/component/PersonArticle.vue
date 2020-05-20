@@ -123,6 +123,7 @@ export default {
         font-weight: bold;
         color: #000;
         cursor: pointer;
+        @include ellipsis;
         &:hover{
           color: #3a8b96;
         }

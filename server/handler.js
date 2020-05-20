@@ -654,11 +654,16 @@ module.exports = {
       const dbo = db.db('project')
       const { user, password } = req.body
       const collection = dbo.collection('user')
-      collection.findOne({ user, password }).then(result => {
+      collection.findOne({ user: req.body.user }).then(result => {
         if (!result) {
           res.send({
             code: -1,
             msg: '没有查询到该用户'
+          })
+        } else if (req.body.password !== result.password) {
+          res.send({
+            code: 1,
+            msg: '密码错误'
           })
         } else {
           const token = generateToken(user)
@@ -667,7 +672,6 @@ module.exports = {
               token
             }
           }
-
           collection.updateOne({ user, password }, updateContent, err => {
             if (err) {
               res.send({

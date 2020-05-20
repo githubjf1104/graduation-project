@@ -43,7 +43,7 @@
             </div>
             <div class="index-username">
                 <ul>
-                  <li class="author-list" v-for="(author, index) in indexAuthor" :key="index">
+                  <li class="author-list" v-for="(author, index) in authorList" :key="index">
                     <div class="username" @click="handleToPersonalDetail(author.user)">{{author.user}}</div>
                   </li>
                 </ul>
@@ -69,7 +69,7 @@
     </div>
 </template>
 <script>
-import { fetchAllArticles, fetchArticleContentById, fetchAllUser } from '@/api/index'
+import { fetchAllArticles, fetchArticleContentById } from '@/api/index'
 import noData from '@/components/common/noData.vue'
 
 export default {
@@ -83,6 +83,7 @@ export default {
     return {
       articleList: [],
       authorList: [],
+      hostArticle: [],
       pageSize: 6,
       currentPage: 1,
       total: 0,
@@ -91,18 +92,10 @@ export default {
       pickervalue: new Date()
     }
   },
-  computed: {
-    // 作者列表
-    indexAuthor () {
-      return this.authorList.slice(0, 3)
-    },
-    hostArticle () {
-      return this.articleList.slice(0, 6)
-    }
-  },
+  computed: {},
   created () {
     this.getAllArticles()
-    this.getAllUser()
+    // this.getAllUser()
     this.Bus.$on('handlesearch', content => {
       this.searchContent = content
       this.currentPage = 1
@@ -113,6 +106,38 @@ export default {
   },
   filters: {},
   methods: {
+    // 处理侧边栏显示作者数据
+    handleSliderAuthor () {
+      // 拆分为{a:[]}
+      let articleData = {}
+      this.articleList.forEach(item => {
+        if (articleData[item.username] === undefined) {
+          articleData[item.username] = [item]
+        } else {
+          this.$set(articleData[item.username], articleData[item.username].length, item)
+        }
+      })
+      // 拆分为[{a:[]}]
+      let list = []
+      for (let key in articleData) {
+        list.push({
+          user: key,
+          articles: articleData[key]
+        })
+      }
+      list = list.sort((a, b) => {
+        return b.articles.length - a.articles.length
+      })
+      this.authorList = list.slice(0, 4)
+    },
+    // 处理侧边栏文章列表显示
+    handleSliderArticle () {
+      let article = []
+      article = this.articleList.sort((o1, o2) => {
+        return o2.likes.length - o1.likes.length
+      })
+      this.hostArticle = article.slice(0, 5)
+    },
     // 分页
     handleSizeChange (val) {
       // console.log(`每页 ${val} 条`)
@@ -148,24 +173,26 @@ export default {
           this.articleList = res.data.data
           this.total = res.data.total
           this.loading = false
+          this.handleSliderAuthor()
+          this.handleSliderArticle()
         }
       }).catch(() => {
         this.loading = false
       })
     },
     // 查询所有用户
-    getAllUser () {
-      fetchAllUser().then(res => {
-        if (res.data.code === 0 && res.status === 200) {
-          this.authorList = res.data.data
-        } else {
-          this.$message.error('获取用户失败')
-        }
-      }).catch(err => {
-        console.log(err)
-        this.$message.error('获取用户失败')
-      })
-    },
+    // getAllUser () {
+    //   fetchAllUser().then(res => {
+    //     if (res.data.code === 0 && res.status === 200) {
+    //       this.authorList = res.data.data
+    //     } else {
+    //       this.$message.error('获取用户失败')
+    //     }
+    //   }).catch(err => {
+    //     console.log(err)
+    //     this.$message.error('获取用户失败')
+    //   })
+    // },
     // 转到用户个人中心
     handleToPersonalDetail (name) {
       this.$router.push({name: 'PersonArticle', params: {username: name}})
